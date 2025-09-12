@@ -1,0 +1,6 @@
+User-agent: *
+Disallow: /admin/
+Disallow: /BlagoTour2017Oct/
+Disallow: /BlagoTour2023Sept/
+Host: https://blagoveshenka.ru/
+Sitemap: https://blagoveshenka.ru/sitemap.xml
