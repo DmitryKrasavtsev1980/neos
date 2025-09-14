@@ -12,7 +12,7 @@ return [
      * The maximum file size of an item in bytes.
      * Adding a larger file will result in an exception.
      */
-    'max_file_size' => 1024 * 1024 * 1000, // 10MB
+    'max_file_size' => 1024 * 1024 * 2000, // 20MB
 
     /*
      * This queue connection will be used to generate derived and responsive images.
@@ -48,7 +48,8 @@ return [
      * in the same session. You can opt to disable this for stateless usage of
      * the pro components.
      */
-    'enable_temporary_uploads_session_affinity' => true,
+    'enable_temporary_uploads_session_a
+    ffinity' => true,
 
     /*
      * When enabled, Media Library pro will generate thumbnails for uploaded file.

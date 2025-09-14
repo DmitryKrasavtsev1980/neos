@@ -18,4 +18,5 @@ use Illuminate\Support\Facades\Route;
 */
 Route::get('/', [FilamentPageController::class, 'show'])->name('HomePage');
 Route::get('/sitemap.xml', [SitemapXmlController::class, 'index'])->name('sitemap');
+Route::get('/tour/{uuid}', [App\Http\Controllers\TourViewController::class, 'show'])->name('tour.view');
 Route::get('/{filamentPage?}/{id?}', [FilamentPageController::class, 'show'])->name('filamentPage');

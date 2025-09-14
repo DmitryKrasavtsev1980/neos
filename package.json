@@ -17,7 +17,13 @@
         "vite": "^4.0.0"
     },
     "dependencies": {
+        "@photo-sphere-viewer/core": "^5.14.0",
+        "@photo-sphere-viewer/gallery-plugin": "^5.14.0",
+        "@photo-sphere-viewer/map-plugin": "^5.14.0",
+        "@photo-sphere-viewer/plan-plugin": "^5.14.0",
         "@tailwindplus/elements": "^1.0.12",
-        "alpinejs": "^3.11.1"
+        "alpinejs": "^3.11.1",
+        "leaflet": "^1.9.4",
+        "three": "^0.180.0"
     }
 }

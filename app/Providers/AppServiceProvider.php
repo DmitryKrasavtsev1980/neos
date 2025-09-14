@@ -37,6 +37,10 @@ class AppServiceProvider extends ServiceProvider
                     ->icon('heroicon-s-pencil')
                     ->collapsed(),
                 NavigationGroup::make()
+                    ->label('3D tours')
+                    ->icon('heroicon-s-cube')
+                    ->collapsed(),
+                NavigationGroup::make()
                     ->label('Pages & Components')
                     ->icon('heroicon-s-cog')
                     ->collapsed(),
