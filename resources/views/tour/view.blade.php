@@ -163,7 +163,7 @@
                 ],
                 @endif
                 defaultZoomLvl: 50,
-                moveSpeed: 5.0,
+                moveSpeed: 4.0,
                 zoomSpeed: 2.0,
                 plugins: plugins
             });
