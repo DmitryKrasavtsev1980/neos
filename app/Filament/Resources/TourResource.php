@@ -17,6 +17,8 @@ use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\SpatieMediaLibraryFileUpload;
 use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\TextInput;
+use Filament\Forms\Components\Select;
+use Filament\Forms\Components\RichEditor;
 
 class TourResource extends Resource
 {
@@ -37,7 +39,38 @@ class TourResource extends Resource
                     TextInput::make('name')
                         ->required()
                         ->maxLength(255),
-                ]),
+                    Select::make('type')
+                        ->label('Тип страницы')
+                        ->options([
+                            'tour' => 'Виртуальный тур',
+                            'personal_page' => 'Персональная страница объекта'
+                        ])
+                        ->default('tour')
+                        ->required()
+                        ->reactive(),
+                ])->statePath('data'),
+
+                // Поля для персональной страницы (только безопасные поля)
+                Card::make()
+                    ->schema([
+                        TextInput::make('page_title')
+                            ->label('Заголовок страницы')
+                            ->maxLength(255)
+                            ->columnSpanFull(),
+                        RichEditor::make('description')
+                            ->label('Описание объекта')
+                            ->columnSpanFull(),
+                        TextInput::make('latitude')
+                            ->label('Широта (для карты)')
+                            ->numeric()
+                            ->step(0.000001),
+                        TextInput::make('longitude')
+                            ->label('Долгота (для карты)')
+                            ->numeric()
+                            ->step(0.000001),
+                    ])
+                    ->statePath('data')
+                    ->visible(fn ($get) => $get('data.type') === 'personal_page'),
                 Card::make()
                 ->schema([
                     FileUpload::make('floor_plan')
@@ -76,6 +109,16 @@ class TourResource extends Resource
             ->columns([
                 Tables\Columns\TextColumn::make('id')->sortable(),
                 Tables\Columns\TextColumn::make('name')->limit(50)->sortable()->searchable(),
+                Tables\Columns\BadgeColumn::make('data.type')
+                    ->label('Тип')
+                    ->enum([
+                        'tour' => 'Виртуальный тур',
+                        'personal_page' => 'Персональная страница'
+                    ])
+                    ->colors([
+                        'primary' => 'tour',
+                        'success' => 'personal_page',
+                    ]),
             ])
             ->filters([
                 //
