@@ -34,12 +34,9 @@ class TourResource extends Resource
     {
         return $form
             ->schema([
-                Card::make()
-                ->schema([
-                    TextInput::make('name')
-                        ->required()
-                        ->maxLength(255),
-                ]),
+                TextInput::make('name')
+                    ->required()
+                    ->maxLength(255),
                 Card::make()
                 ->schema([
                     Select::make('type')
@@ -72,14 +69,17 @@ class TourResource extends Resource
                         ->numeric()
                         ->step(0.000001)
                         ->visible(fn ($get) => $get('type') === 'personal_page'),
+                    FileUpload::make('gallery_images')
+                        ->label('Галерея фотографий')
+                        ->disk('public')
+                        ->directory('gallery')
+                        ->multiple()
+                        ->columnSpanFull()
+                        ->visible(fn ($get) => $get('type') === 'personal_page'),
                     FileUpload::make('floor_plan')
                         ->label('План помещения')
                         ->disk('public')
                         ->directory('floor-plans')
-                        ->maxSize(10240) // 10MB
-                        ->acceptedFileTypes(['image/*'])
-                        ->image()
-                        ->imagePreviewHeight('200')
                         ->columnSpanFull()
                         ->nullable(),
                     Repeater::make('members')
@@ -90,11 +90,7 @@ class TourResource extends Resource
                                 ->maxLength(255),
                             FileUpload::make('pano')
                                 ->disk('public')
-                                ->directory('tour-components')
-                                ->maxSize(20480) // 20MB
-                                ->acceptedFileTypes(['image/*'])
-                                ->image()
-                                ->imagePreviewHeight('100'),
+                                ->directory('tour-components'),
                         ])
                         ->columns(2)
                         ->createItemButtonLabel('Добавить панораму'),

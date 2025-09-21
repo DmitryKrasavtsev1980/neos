@@ -58,8 +58,28 @@ class TourViewController extends Controller
         // Подготавливаем данные для персональной страницы
         $personalPageData = [];
         if ($pageType === 'personal_page') {
-            // Пока что галерея отключена
-            $gallery = collect();
+            // Обрабатываем галерею фотографий
+            $galleryImages = $tour->data['gallery_images'] ?? [];
+            $gallery = collect($galleryImages)->map(function ($imagePath) {
+                try {
+                    if (!$imagePath || !is_string($imagePath)) {
+                        return null;
+                    }
+
+                    if (!Storage::disk('public')->exists($imagePath)) {
+                        \Log::warning("Gallery image not found: {$imagePath}");
+                        return null;
+                    }
+
+                    return [
+                        'image' => Storage::url($imagePath),
+                        'title' => '',
+                    ];
+                } catch (\Exception $e) {
+                    \Log::error("Error processing gallery image: " . $e->getMessage());
+                    return null;
+                }
+            })->filter();
 
             $personalPageData = [
                 'page_title' => $tour->data['page_title'] ?? $tour->name,
