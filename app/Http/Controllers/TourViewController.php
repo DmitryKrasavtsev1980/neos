@@ -12,6 +12,9 @@ class TourViewController extends Controller
     public function show($uuid)
     {
         $tour = Tour::where('uuid', $uuid)->firstOrFail();
+        
+        // Определяем тип страницы
+        $pageType = $tour->data['type'] ?? 'tour';
 
         // Получаем данные панорам из JSON (теперь они в data.members)
         $members = $tour->data['members'] ?? [];
@@ -44,11 +47,61 @@ class TourViewController extends Controller
             $floorPlan = Storage::url($tour->data['floor_plan']);
         }
 
-        return view('tour.view', [
+        // Подготавливаем данные для персональной страницы
+        $personalPageData = [];
+        if ($pageType === 'personal_page') {
+            // Обрабатываем галерею фотографий
+            $galleryData = $tour->data['gallery'] ?? [];
+            $gallery = collect($galleryData)->filter(function ($item) {
+                return is_array($item) && isset($item['image']);
+            })->map(function ($item) {
+                $imagePath = $item['image'] ?? null;
+
+                // Filament сохраняет изображения как массив с UUID ключами
+                if (is_array($imagePath)) {
+                    // Берем первое значение из массива (путь к файлу)
+                    $imagePath = !empty($imagePath) ? array_values($imagePath)[0] : null;
+                }
+
+                // Проверяем, что путь валидный
+                if (!$imagePath || !is_string($imagePath)) {
+                    return null;
+                }
+
+                return [
+                    'image' => Storage::url($imagePath),
+                    'title' => $item['title'] ?? '',
+                ];
+            })->filter(); // Убираем null значения
+
+            $personalPageData = [
+                'page_title' => $tour->data['page_title'] ?? $tour->name,
+                'description' => $tour->data['description'] ?? '',
+                'latitude' => $tour->data['latitude'] ?? null,
+                'longitude' => $tour->data['longitude'] ?? null,
+                'gallery' => $gallery,
+            ];
+        } else {
+            // Для обычных туров тоже создаем пустой массив данных
+            $personalPageData = [
+                'page_title' => $tour->name,
+                'description' => '',
+                'latitude' => null,
+                'longitude' => null,
+                'gallery' => collect(),
+            ];
+        }
+
+        // Выбираем шаблон в зависимости от типа
+        $viewName = $pageType === 'personal_page' ? 'tour.personal-page' : 'tour.view';
+
+        return view($viewName, [
             'tour' => $tour,
             'panoramas' => $panoramas,
             'firstPanorama' => $panoramas->first(),
             'floorPlan' => $floorPlan,
+            'pageType' => $pageType,
+            'personalPageData' => $personalPageData,
         ]);
     }
 }

@@ -17,6 +17,9 @@ use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\SpatieMediaLibraryFileUpload;
 use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\TextInput;
+use Filament\Forms\Components\Select;
+use Filament\Forms\Components\Textarea;
+use Filament\Forms\Components\RichEditor;
 
 class TourResource extends Resource
 {
@@ -37,7 +40,59 @@ class TourResource extends Resource
                     TextInput::make('name')
                         ->required()
                         ->maxLength(255),
-                ]),
+                    Select::make('type')
+                        ->label('Тип страницы')
+                        ->options([
+                            'tour' => 'Виртуальный тур',
+                            'personal_page' => 'Персональная страница объекта'
+                        ])
+                        ->default('tour')
+                        ->required()
+                        ->reactive(),
+                ])->statePath('data'),
+
+                // Поля для персональной страницы
+                Card::make()
+                    ->schema([
+                        TextInput::make('page_title')
+                            ->label('Заголовок страницы')
+                            ->maxLength(255)
+                            ->columnSpanFull(),
+                        RichEditor::make('description')
+                            ->label('Описание объекта')
+                            ->columnSpanFull(),
+                        TextInput::make('latitude')
+                            ->label('Широта (для карты)')
+                            ->numeric()
+                            ->step(0.000001),
+                        TextInput::make('longitude')
+                            ->label('Долгота (для карты)')
+                            ->numeric()
+                            ->step(0.000001),
+                        Repeater::make('gallery')
+                            ->label('Галерея фотографий')
+                            ->schema([
+                                FileUpload::make('image')
+                                    ->label('Фотография')
+                                    ->disk('public')
+                                    ->directory('gallery')
+                                    ->maxSize(10240)
+                                    ->acceptedFileTypes(['image/*'])
+                                    ->image()
+                                    ->imagePreviewHeight('100'),
+                                TextInput::make('title')
+                                    ->label('Подпись к фото')
+                                    ->maxLength(255)
+                                    ->nullable(),
+                            ])
+                            ->columns(2)
+                            ->createItemButtonLabel('Добавить фото')
+                            ->columnSpanFull(),
+                    ])
+                    ->statePath('data')
+                    ->visible(fn ($get) => $get('data.type') === 'personal_page'),
+
+                // Существующие поля для тура
                 Card::make()
                 ->schema([
                     FileUpload::make('floor_plan')
@@ -76,6 +131,16 @@ class TourResource extends Resource
             ->columns([
                 Tables\Columns\TextColumn::make('id')->sortable(),
                 Tables\Columns\TextColumn::make('name')->limit(50)->sortable()->searchable(),
+                Tables\Columns\BadgeColumn::make('data.type')
+                    ->label('Тип')
+                    ->enum([
+                        'tour' => 'Виртуальный тур',
+                        'personal_page' => 'Персональная страница'
+                    ])
+                    ->colors([
+                        'primary' => 'tour',
+                        'success' => 'personal_page',
+                    ]),
             ])
             ->filters([
                 //
