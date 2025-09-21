@@ -44,7 +44,15 @@ class TourViewController extends Controller
         // Получаем план помещения если есть (теперь он в data.floor_plan)
         $floorPlan = null;
         if (isset($tour->data['floor_plan']) && $tour->data['floor_plan']) {
-            $floorPlan = Storage::url($tour->data['floor_plan']);
+            try {
+                if (Storage::disk('public')->exists($tour->data['floor_plan'])) {
+                    $floorPlan = Storage::url($tour->data['floor_plan']);
+                } else {
+                    \Log::warning("Floor plan not found: {$tour->data['floor_plan']}");
+                }
+            } catch (\Exception $e) {
+                \Log::error("Error processing floor plan: " . $e->getMessage());
+            }
         }
 
         // Подготавливаем данные для персональной страницы
@@ -55,23 +63,34 @@ class TourViewController extends Controller
             $gallery = collect($galleryData)->filter(function ($item) {
                 return is_array($item) && isset($item['image']);
             })->map(function ($item) {
-                $imagePath = $item['image'] ?? null;
+                try {
+                    $imagePath = $item['image'] ?? null;
 
-                // Filament сохраняет изображения как массив с UUID ключами
-                if (is_array($imagePath)) {
-                    // Берем первое значение из массива (путь к файлу)
-                    $imagePath = !empty($imagePath) ? array_values($imagePath)[0] : null;
-                }
+                    // Filament сохраняет изображения как массив с UUID ключами
+                    if (is_array($imagePath)) {
+                        // Берем первое значение из массива (путь к файлу)
+                        $imagePath = !empty($imagePath) ? array_values($imagePath)[0] : null;
+                    }
 
-                // Проверяем, что путь валидный
-                if (!$imagePath || !is_string($imagePath)) {
+                    // Проверяем, что путь валидный
+                    if (!$imagePath || !is_string($imagePath)) {
+                        return null;
+                    }
+
+                    // Проверяем существование файла
+                    if (!Storage::disk('public')->exists($imagePath)) {
+                        \Log::warning("Gallery image not found: {$imagePath}");
+                        return null;
+                    }
+
+                    return [
+                        'image' => Storage::url($imagePath),
+                        'title' => $item['title'] ?? '',
+                    ];
+                } catch (\Exception $e) {
+                    \Log::error("Error processing gallery image: " . $e->getMessage());
                     return null;
                 }
-
-                return [
-                    'image' => Storage::url($imagePath),
-                    'title' => $item['title'] ?? '',
-                ];
             })->filter(); // Убираем null значения
 
             $personalPageData = [
