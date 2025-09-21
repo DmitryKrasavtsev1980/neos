@@ -69,21 +69,10 @@ class TourResource extends Resource
                             ->label('Долгота (для карты)')
                             ->numeric()
                             ->step(0.000001),
-                        FileUpload::make('gallery_images')
-                            ->label('Галерея фотографий')
-                            ->disk('public')
-                            ->directory('gallery')
-                            ->maxSize(10240)
-                            ->acceptedFileTypes(['image/*'])
-                            ->image()
-                            ->multiple()
-                            ->imagePreviewHeight('100')
-                            ->columnSpanFull(),
                     ])
                     ->statePath('data')
                     ->visible(fn ($get) => $get('data.type') === 'personal_page'),
 
-                // Существующие поля для тура
                 Card::make()
                 ->schema([
                     FileUpload::make('floor_plan')
@@ -148,14 +137,14 @@ class TourResource extends Resource
                 Tables\Actions\DeleteBulkAction::make(),
             ]);
     }
-    
+
     public static function getRelations(): array
     {
         return [
             //
         ];
     }
-    
+
     public static function getPages(): array
     {
         return [
@@ -163,5 +152,5 @@ class TourResource extends Resource
             'create' => Pages\CreateTour::route('/create'),
             'edit' => Pages\EditTour::route('/{record}/edit'),
         ];
-    }    
+    }
 }
