@@ -58,20 +58,10 @@ class TourViewController extends Controller
         // Подготавливаем данные для персональной страницы
         $personalPageData = [];
         if ($pageType === 'personal_page') {
-            // Обрабатываем галерею фотографий
-            $galleryData = $tour->data['gallery'] ?? [];
-            $gallery = collect($galleryData)->filter(function ($item) {
-                return is_array($item) && isset($item['image']);
-            })->map(function ($item) {
+            // Обрабатываем галерею фотографий (новый формат - массив путей)
+            $galleryImages = $tour->data['gallery_images'] ?? [];
+            $gallery = collect($galleryImages)->map(function ($imagePath) {
                 try {
-                    $imagePath = $item['image'] ?? null;
-
-                    // Filament сохраняет изображения как массив с UUID ключами
-                    if (is_array($imagePath)) {
-                        // Берем первое значение из массива (путь к файлу)
-                        $imagePath = !empty($imagePath) ? array_values($imagePath)[0] : null;
-                    }
-
                     // Проверяем, что путь валидный
                     if (!$imagePath || !is_string($imagePath)) {
                         return null;
@@ -85,7 +75,7 @@ class TourViewController extends Controller
 
                     return [
                         'image' => Storage::url($imagePath),
-                        'title' => $item['title'] ?? '',
+                        'title' => '',
                     ];
                 } catch (\Exception $e) {
                     \Log::error("Error processing gallery image: " . $e->getMessage());

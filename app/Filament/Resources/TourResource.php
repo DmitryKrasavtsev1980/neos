@@ -69,24 +69,15 @@ class TourResource extends Resource
                             ->label('Долгота (для карты)')
                             ->numeric()
                             ->step(0.000001),
-                        Repeater::make('gallery')
+                        FileUpload::make('gallery_images')
                             ->label('Галерея фотографий')
-                            ->schema([
-                                FileUpload::make('image')
-                                    ->label('Фотография')
-                                    ->disk('public')
-                                    ->directory('gallery')
-                                    ->maxSize(10240)
-                                    ->acceptedFileTypes(['image/*'])
-                                    ->image()
-                                    ->imagePreviewHeight('100'),
-                                TextInput::make('title')
-                                    ->label('Подпись к фото')
-                                    ->maxLength(255)
-                                    ->nullable(),
-                            ])
-                            ->columns(2)
-                            ->createItemButtonLabel('Добавить фото')
+                            ->disk('public')
+                            ->directory('gallery')
+                            ->maxSize(10240)
+                            ->acceptedFileTypes(['image/*'])
+                            ->image()
+                            ->multiple()
+                            ->imagePreviewHeight('100')
                             ->columnSpanFull(),
                     ])
                     ->statePath('data')
