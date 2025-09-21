@@ -39,6 +39,9 @@ class TourResource extends Resource
                     TextInput::make('name')
                         ->required()
                         ->maxLength(255),
+                ]),
+                Card::make()
+                ->schema([
                     Select::make('type')
                         ->label('Тип страницы')
                         ->options([
@@ -48,31 +51,27 @@ class TourResource extends Resource
                         ->default('tour')
                         ->required()
                         ->reactive(),
-                ])->statePath('data'),
 
-                // Поля для персональной страницы (только безопасные поля)
-                Card::make()
-                    ->schema([
-                        TextInput::make('page_title')
-                            ->label('Заголовок страницы')
-                            ->maxLength(255)
-                            ->columnSpanFull(),
-                        RichEditor::make('description')
-                            ->label('Описание объекта')
-                            ->columnSpanFull(),
-                        TextInput::make('latitude')
-                            ->label('Широта (для карты)')
-                            ->numeric()
-                            ->step(0.000001),
-                        TextInput::make('longitude')
-                            ->label('Долгота (для карты)')
-                            ->numeric()
-                            ->step(0.000001),
-                    ])
-                    ->statePath('data')
-                    ->visible(fn ($get) => $get('data.type') === 'personal_page'),
-                Card::make()
-                ->schema([
+                    // Поля для персональной страницы
+                    TextInput::make('page_title')
+                        ->label('Заголовок страницы')
+                        ->maxLength(255)
+                        ->columnSpanFull()
+                        ->visible(fn ($get) => $get('type') === 'personal_page'),
+                    RichEditor::make('description')
+                        ->label('Описание объекта')
+                        ->columnSpanFull()
+                        ->visible(fn ($get) => $get('type') === 'personal_page'),
+                    TextInput::make('latitude')
+                        ->label('Широта (для карты)')
+                        ->numeric()
+                        ->step(0.000001)
+                        ->visible(fn ($get) => $get('type') === 'personal_page'),
+                    TextInput::make('longitude')
+                        ->label('Долгота (для карты)')
+                        ->numeric()
+                        ->step(0.000001)
+                        ->visible(fn ($get) => $get('type') === 'personal_page'),
                     FileUpload::make('floor_plan')
                         ->label('План помещения')
                         ->disk('public')
