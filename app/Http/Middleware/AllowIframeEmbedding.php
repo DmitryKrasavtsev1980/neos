@@ -21,9 +21,8 @@ class AllowIframeEmbedding
         // Удаляем X-Frame-Options чтобы разрешить встраивание в iframe
         $response->headers->remove('X-Frame-Options');
 
-        // Или можно установить Content-Security-Policy frame-ancestors
-        // если нужно разрешить конкретные домены
-        // $response->headers->set('Content-Security-Policy', "frame-ancestors 'self' *");
+        // Устанавливаем CSP для разрешения встраивания с любых доменов
+        $response->headers->set('Content-Security-Policy', "frame-ancestors *");
 
         return $response;
     }
