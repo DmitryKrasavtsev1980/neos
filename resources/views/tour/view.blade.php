@@ -153,10 +153,10 @@
                 // Добавляем кастомную кнопку планировки в navbar
                 @if($floorPlan)
                 navbar: [
+                    @if(count($panoramas) > 1)'gallery',@endif
+                    floorPlanButton,
                     'zoom',
                     'move',
-                    floorPlanButton,
-                    @if(count($panoramas) > 1)'gallery',@endif
                     'description',
                     'caption',
                     'fullscreen'
