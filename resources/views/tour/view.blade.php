@@ -162,7 +162,7 @@
                     'fullscreen'
                 ],
                 @endif
-                defaultZoomLvl: 70,
+                defaultZoomLvl: 30,
                 moveSpeed: 4.0,
                 zoomSpeed: 2.0,
                 plugins: plugins
