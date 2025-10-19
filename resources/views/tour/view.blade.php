@@ -364,7 +364,8 @@
                                 yaw: (panorama.camera?.yaw || 0) * Math.PI / 180,
                                 pitch: (panorama.camera?.pitch || 0) * Math.PI / 180
                             },
-                            zoom: panorama.camera?.zoom || 30
+                            zoom: panorama.camera?.zoom || 30,
+                            caption: '{{ $tour->name }} <b>&bull;</b> ' + panorama.title
                         }).then(() => {
                             // Отображаем hotspots для новой панорамы
                             renderHotspots(panorama);
@@ -408,7 +409,8 @@
                         yaw: cameraYaw,
                         pitch: cameraPitch
                     },
-                    zoom: cameraZoom
+                    zoom: cameraZoom,
+                    caption: '{{ $tour->name }} <b>&bull;</b> ' + targetPanorama.title
                 }).then(() => {
                     // Отображаем hotspots для новой панорамы
                     renderHotspots(targetPanorama);
