@@ -13,17 +13,22 @@ import '@photo-sphere-viewer/gallery-plugin/index.css';
 import { MapPlugin } from '@photo-sphere-viewer/map-plugin';
 import '@photo-sphere-viewer/map-plugin/index.css';
 
+import { MarkersPlugin } from '@photo-sphere-viewer/markers-plugin';
+import '@photo-sphere-viewer/markers-plugin/index.css';
+
 // Экспорт Viewer и плагинов
 window.PhotoSphereViewer = {
     Viewer,
     GalleryPlugin,
-    MapPlugin
+    MapPlugin,
+    MarkersPlugin
 };
 
 console.log('PSV loaded:', {
     Viewer: !!Viewer,
     GalleryPlugin: !!GalleryPlugin,
-    MapPlugin: !!MapPlugin
+    MapPlugin: !!MapPlugin,
+    MarkersPlugin: !!MarkersPlugin
 });
 
 

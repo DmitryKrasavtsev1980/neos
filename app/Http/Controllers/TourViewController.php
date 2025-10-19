@@ -27,11 +27,34 @@ class TourViewController extends Controller
             $thumbnailPath = ThumbnailService::getThumbnailPath($originalPath);
 
             return [
-                'id' => (string) $index, // Gallery плагин требует строковые ID
+                'id' => $item['id'] ?? (string) $index, // Используем UUID из данных или индекс для совместимости
                 'title' => $item['title'] ?? "Scene " . ($index + 1),
                 'image' => $originalPath,
                 'url' => Storage::url($originalPath),
                 'thumbnail' => ThumbnailService::createThumbnail($originalPath, $thumbnailPath),
+
+                // Новые параметры камеры
+                'camera' => [
+                    'yaw' => $item['camera']['yaw'] ?? 0,
+                    'pitch' => $item['camera']['pitch'] ?? 0,
+                    'zoom' => $item['camera']['zoom'] ?? 30,
+                ],
+
+                // Настройки автовращения
+                'autorotate' => [
+                    'enabled' => $item['autorotate']['enabled'] ?? false,
+                    'delay' => $item['autorotate']['delay'] ?? 3000,
+                    'speed' => $item['autorotate']['speed'] ?? '2rpm',
+                    'pitch' => $item['autorotate']['pitch'] ?? 0,
+                ],
+
+                // Hotspots для навигации и информации
+                'hotspots' => $item['hotspots'] ?? [],
+
+                // Позиция панорамы на плане помещения
+                'plan_position' => is_string($item['plan_position'] ?? null)
+                    ? json_decode($item['plan_position'], true)
+                    : ($item['plan_position'] ?? null),
             ];
         })->filter(function ($item) {
             return $item !== null;

@@ -20,6 +20,7 @@
         "@photo-sphere-viewer/core": "^5.14.0",
         "@photo-sphere-viewer/gallery-plugin": "^5.14.0",
         "@photo-sphere-viewer/map-plugin": "^5.14.0",
+        "@photo-sphere-viewer/markers-plugin": "^5.14.0",
         "@photo-sphere-viewer/plan-plugin": "^5.14.0",
         "@tailwindplus/elements": "^1.0.12",
         "alpinejs": "^3.11.1",
