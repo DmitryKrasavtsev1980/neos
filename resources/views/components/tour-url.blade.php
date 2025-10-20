@@ -3,7 +3,7 @@
         <div class="group relative rounded-tl-lg rounded-tr-lg border-gray-200 bg-white p-6 sm:rounded-tr-none sm:even:border-l">
             <div class="mt-8">
             <h3 class="text-base font-semibold text-gray-900">
-                <a href="https://neos-nsk.ru/tour/0dd21a29-aff0-43dd-9f7e-d617fe053f98" target="_blank" class="focus:outline-none">
+                <a href="https://neos-nsk.ru/tour/8d01e6c0-facc-48e1-b949-b438495336c0" target="_blank" class="focus:outline-none">
                 <!-- Extend touch target to entire panel -->
                 <span aria-hidden="true" class="absolute inset-0"></span>
                 Виртуальный тур
