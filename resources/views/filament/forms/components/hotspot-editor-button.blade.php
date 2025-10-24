@@ -142,7 +142,7 @@
                             this.viewer = new PhotoSphereViewer.Viewer({
                                 container: document.getElementById('panorama-viewer-' + panoramaId),
                                 panorama: panoramaPath,
-                                defaultZoomLvl: 30,
+                                defaultYaw: 0, // Начальный азимут (0 = север)
                                 navbar: ['zoom', 'fullscreen'],
                                 plugins: [
                                     [PhotoSphereViewer.MarkersPlugin, {
@@ -194,13 +194,25 @@
 
                     // Добавляем маркеры для каждого hotspot'а
                     this.hotspots.forEach((hotspot, index) => {
-                        console.log(`Добавление маркера ${index}:`, hotspot);
+                        // Используем ту же коррекцию что и в addHotspot
+                        const CORRECTION_ANGLE = 96;
+                        const yawRad = (parseFloat(hotspot.position.yaw) + CORRECTION_ANGLE) * Math.PI / 180;
+                        const pitchRad = parseFloat(hotspot.position.pitch) * Math.PI / 180;
+                        
+                        console.log(`Добавление маркера ${index}:`, {
+                            hotspot: hotspot,
+                            yaw_deg_stored: hotspot.position.yaw,
+                            pitch_deg_stored: hotspot.position.pitch,
+                            correction_angle: CORRECTION_ANGLE,
+                            yaw_rad_corrected: yawRad,
+                            pitch_rad: pitchRad
+                        });
 
                         const markerConfig = {
                             id: hotspot.id,
                             position: {
-                                yaw: hotspot.position.yaw * Math.PI / 180,
-                                pitch: hotspot.position.pitch * Math.PI / 180
+                                yaw: yawRad,
+                                pitch: pitchRad
                             },
                             html: hotspot.type === 'navigation'
                                 ? `<div style="position: relative;">
@@ -217,8 +229,6 @@
                             data: hotspot
                         };
 
-                        console.log('Конфиг маркера:', markerConfig);
-
                         try {
                             this.markersPlugin.addMarker(markerConfig);
                             console.log('✅ Маркер добавлен:', hotspot.id);
@@ -231,12 +241,33 @@
                 },
 
                 addHotspot(yaw, pitch) {
+                    // Пробуем разные значения коррекции - возможно нужно больше 90 градусов
+                    const CORRECTION_ANGLE = 96; // Попробуйте 95, 100, 85 и т.д.
+                    
+                    let yawDeg = (yaw * 180 / Math.PI) - CORRECTION_ANGLE;
+                    let pitchDeg = pitch * 180 / Math.PI;
+                    
+                    // Нормализуем yaw в диапазон 0-360
+                    yawDeg = yawDeg % 360;
+                    if (yawDeg < 0) {
+                        yawDeg += 360;
+                    }
+                    
+                    console.log('Создание hotspot из координат:', {
+                        yaw_rad: yaw,
+                        pitch_rad: pitch,
+                        yaw_deg_raw: yaw * 180 / Math.PI,
+                        correction_angle: CORRECTION_ANGLE,
+                        yaw_deg_corrected: yawDeg,
+                        pitch_deg: pitchDeg
+                    });
+
                     const hotspot = {
                         id: 'hotspot-' + Date.now(),
                         type: this.mode === 'add-navigation' ? 'navigation' : 'info',
                         position: {
-                            yaw: yaw * 180 / Math.PI,  // Конвертация в градусы
-                            pitch: pitch * 180 / Math.PI
+                            yaw: yawDeg,
+                            pitch: pitchDeg
                         },
                         tooltip: `Точка ${this.hotspots.length + 1}`
                     };
@@ -244,8 +275,6 @@
                     this.hotspots.push(hotspot);
                     this.renderMarkers();
                     console.log('Добавлен hotspot:', hotspot);
-
-                    // Переключаемся в режим просмотра после добавления
                     this.mode = 'view';
                 },
 
