@@ -8,7 +8,7 @@
     <!-- TailwindCSS для стилизации -->
     <script src="https://cdn.tailwindcss.com"></script>
 
-    <!-- Vite scripts -->
+    <!-- Use Vite bundle that exposes window.PhotoSphereViewer to avoid duplicate Three.js -->
     @vite(['resources/js/app.js'])
 
     <!-- Leaflet для Plan плагина -->
@@ -280,7 +280,7 @@
                     const markerConfig = {
                         id: hotspot.id,
                         position: {
-                            yaw: (hotspot.position.yaw || 0) * Math.PI / 180,
+                            yaw: (hotspot.position.yaw || 0) * Math.PI / 180,  // конвертация градусов в радианы
                             pitch: (hotspot.position.pitch || 0) * Math.PI / 180
                         },
                         html: '',
@@ -463,7 +463,8 @@
                     console.log('Панорама загружена через Gallery:', currentPanorama.title);
 
                     // Устанавливаем правильную позицию камеры
-                    viewer.animate({
+                viewer.animate({
+                        // API ожидает значения в радианах
                         yaw: (currentPanorama.camera?.yaw || 0) * Math.PI / 180,
                         pitch: (currentPanorama.camera?.pitch || 0) * Math.PI / 180,
                         zoom: currentPanorama.camera?.zoom || 30,

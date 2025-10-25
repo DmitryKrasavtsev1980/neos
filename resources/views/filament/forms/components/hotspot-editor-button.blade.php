@@ -23,12 +23,8 @@
 
 @if($panoPath)
 @once
-    <!-- Photo Sphere Viewer CDN -->
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@photo-sphere-viewer/core/index.min.css"/>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@photo-sphere-viewer/markers-plugin/index.min.css"/>
-    <script src="https://cdn.jsdelivr.net/npm/three/build/three.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@photo-sphere-viewer/core/index.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@photo-sphere-viewer/markers-plugin/index.min.js"></script>
+    <!-- Use Vite bundle that exposes window.PhotoSphereViewer to avoid duplicate Three.js -->
+    @vite(['resources/js/app.js'])
 
     <!-- Alpine x-cloak стили -->
     <style>
@@ -129,7 +125,7 @@
                 initViewer() {
                     // Ждем загрузки PhotoSphereViewer
                     const checkAndInit = () => {
-                        if (typeof PhotoSphereViewer === 'undefined' || typeof PhotoSphereViewer.MarkersPlugin === 'undefined') {
+                        if (!window.PhotoSphereViewer || !window.PhotoSphereViewer.Viewer || !window.PhotoSphereViewer.MarkersPlugin) {
                             console.log('Ожидание загрузки PhotoSphereViewer и MarkersPlugin...');
                             setTimeout(checkAndInit, 100);
                             return;
@@ -139,19 +135,19 @@
                             const panoramaPath = '/storage/' + panoramaUrl;
                             console.log('Инициализация viewer с панорамой:', panoramaPath);
 
-                            this.viewer = new PhotoSphereViewer.Viewer({
+                            this.viewer = new window.PhotoSphereViewer.Viewer({
                                 container: document.getElementById('panorama-viewer-' + panoramaId),
                                 panorama: panoramaPath,
                                 defaultYaw: 0, // Начальный азимут (0 = север)
                                 navbar: ['zoom', 'fullscreen'],
                                 plugins: [
-                                    [PhotoSphereViewer.MarkersPlugin, {
+                                    [window.PhotoSphereViewer.MarkersPlugin, {
                                         markers: []
                                     }]
                                 ]
                             });
 
-                            this.markersPlugin = this.viewer.getPlugin(PhotoSphereViewer.MarkersPlugin);
+                            this.markersPlugin = this.viewer.getPlugin(window.PhotoSphereViewer.MarkersPlugin);
 
                             console.log('MarkersPlugin получен:', this.markersPlugin);
                             console.log('Текущие hotspots перед отрисовкой:', this.hotspots);
@@ -194,17 +190,14 @@
 
                     // Добавляем маркеры для каждого hotspot'а
                     this.hotspots.forEach((hotspot, index) => {
-                        // Используем ту же коррекцию что и в addHotspot
-                        const CORRECTION_ANGLE = 96;
-                        const yawRad = (parseFloat(hotspot.position.yaw) + CORRECTION_ANGLE) * Math.PI / 180;
+                        // Конвертируем градусы в радианы для отображения в редакторе
+                        const yawRad = parseFloat(hotspot.position.yaw) * Math.PI / 180;
                         const pitchRad = parseFloat(hotspot.position.pitch) * Math.PI / 180;
                         
                         console.log(`Добавление маркера ${index}:`, {
-                            hotspot: hotspot,
-                            yaw_deg_stored: hotspot.position.yaw,
-                            pitch_deg_stored: hotspot.position.pitch,
-                            correction_angle: CORRECTION_ANGLE,
-                            yaw_rad_corrected: yawRad,
+                            yaw_deg: hotspot.position.yaw,
+                            pitch_deg: hotspot.position.pitch,
+                            yaw_rad: yawRad,
                             pitch_rad: pitchRad
                         });
 
@@ -241,10 +234,8 @@
                 },
 
                 addHotspot(yaw, pitch) {
-                    // Пробуем разные значения коррекции - возможно нужно больше 90 градусов
-                    const CORRECTION_ANGLE = 96; // Попробуйте 95, 100, 85 и т.д.
-                    
-                    let yawDeg = (yaw * 180 / Math.PI) - CORRECTION_ANGLE;
+                    // Конвертируем в градусы для хранения в БД
+                    let yawDeg = yaw * 180 / Math.PI;
                     let pitchDeg = pitch * 180 / Math.PI;
                     
                     // Нормализуем yaw в диапазон 0-360
@@ -256,32 +247,50 @@
                     console.log('Создание hotspot из координат:', {
                         yaw_rad: yaw,
                         pitch_rad: pitch,
-                        yaw_deg_raw: yaw * 180 / Math.PI,
-                        correction_angle: CORRECTION_ANGLE,
-                        yaw_deg_corrected: yawDeg,
+                        yaw_deg: yawDeg,
                         pitch_deg: pitchDeg
                     });
 
-                    const hotspot = {
+                    const baseHotspot = {
                         id: 'hotspot-' + Date.now(),
                         type: this.mode === 'add-navigation' ? 'navigation' : 'info',
                         position: {
-                            yaw: yawDeg,
-                            pitch: pitchDeg
+                            yaw: yawDeg,  // сохраняем в градусах!
+                            pitch: pitchDeg // сохраняем в градусах!
                         },
                         tooltip: `Точка ${this.hotspots.length + 1}`
                     };
 
+                    // Инициализируем тип-специфичные поля, чтобы избежать ошибок доступа
+                    const hotspot = (
+                        baseHotspot.type === 'navigation'
+                            ? { ...baseHotspot, target_panorama_id: '', target_camera: { yaw: 0, pitch: 0, zoom: 30 } }
+                            : { ...baseHotspot, content: { description: '' } }
+                    );
+
                     this.hotspots.push(hotspot);
+                    // Выбираем только что добавленный hotspot, чтобы шаблон имел валидный индекс
+                    this.selectedHotspotIndex = this.hotspots.length - 1;
                     this.renderMarkers();
                     console.log('Добавлен hotspot:', hotspot);
                     this.mode = 'view';
                 },
 
                 removeHotspot(index) {
-                    this.hotspots.splice(index, 1);
+                    if (index < 0 || index >= this.hotspots.length) return;
+                    const removed = this.hotspots.splice(index, 1);
+                    console.log('🗑️ Удалён hotspot:', removed[0]);
+
+                    // Пересчитать выбранный индекс
+                    if (this.selectedHotspotIndex === index) {
+                        this.selectedHotspotIndex = null;
+                    } else if (this.selectedHotspotIndex > index) {
+                        this.selectedHotspotIndex -= 1;
+                    }
+
+                    // Принудительное обновление массива для Alpine
+                    this.hotspots = [...this.hotspots];
                     this.renderMarkers();
-                    console.log('Удален hotspot, осталось:', this.hotspots.length);
                 },
 
                 saveHotspots() {
@@ -449,7 +458,7 @@
                             </div>
 
                             <!-- Форма настроек выбранного hotspot -->
-                            <div x-show="selectedHotspotIndex !== null" x-cloak>
+                            <div x-show="selectedHotspotIndex !== null && hotspots[selectedHotspotIndex]" x-cloak>
                                 <h4 class="font-semibold mb-2">Настройки точки</h4>
                                 <template x-if="hotspots[selectedHotspotIndex]">
                                     <div class="space-y-3">
@@ -470,7 +479,7 @@
                                                 <div>
                                                     <label class="block text-xs font-medium text-gray-700 mb-1">Целевая панорама</label>
                                                     <select
-                                                        :value="hotspots[selectedHotspotIndex].target_panorama_id || ''"
+                                                        :value="hotspots[selectedHotspotIndex]?.target_panorama_id || ''"
                                                         @change="updateSelectedHotspot('target_panorama_id', $event.target.value)"
                                                         class="w-full px-2 py-1 text-sm border border-gray-300 rounded focus:ring-1 focus:ring-primary-500 focus:border-primary-500"
                                                     >
@@ -479,7 +488,7 @@
                                                             <option
                                                                 :value="pano.id"
                                                                 x-text="pano.title"
-                                                                :selected="String(pano.id) === String(hotspots[selectedHotspotIndex].target_panorama_id || '')"
+                                                                :selected="String(pano.id) === String(hotspots[selectedHotspotIndex]?.target_panorama_id || '')"
                                                             ></option>
                                                         </template>
                                                     </select>
@@ -492,7 +501,7 @@
                                                             <label class="block text-xs text-gray-600">Yaw (°)</label>
                                                             <input
                                                                 type="number"
-                                                                :value="hotspots[selectedHotspotIndex].target_camera?.yaw || 0"
+                                                                :value="hotspots[selectedHotspotIndex]?.target_camera?.yaw ?? 0"
                                                                 @input="updateSelectedHotspot('target_camera.yaw', parseFloat($event.target.value))"
                                                                 min="0" max="360" step="1"
                                                                 class="w-full px-1 py-1 text-xs border border-gray-300 rounded"
@@ -502,7 +511,7 @@
                                                             <label class="block text-xs text-gray-600">Pitch (°)</label>
                                                             <input
                                                                 type="number"
-                                                                :value="hotspots[selectedHotspotIndex].target_camera?.pitch || 0"
+                                                                :value="hotspots[selectedHotspotIndex]?.target_camera?.pitch ?? 0"
                                                                 @input="updateSelectedHotspot('target_camera.pitch', parseFloat($event.target.value))"
                                                                 min="-90" max="90" step="1"
                                                                 class="w-full px-1 py-1 text-xs border border-gray-300 rounded"
@@ -512,7 +521,7 @@
                                                             <label class="block text-xs text-gray-600">Zoom</label>
                                                             <input
                                                                 type="number"
-                                                                :value="hotspots[selectedHotspotIndex].target_camera?.zoom || 30"
+                                                                :value="hotspots[selectedHotspotIndex]?.target_camera?.zoom ?? 30"
                                                                 @input="updateSelectedHotspot('target_camera.zoom', parseFloat($event.target.value))"
                                                                 min="0" max="100" step="1"
                                                                 class="w-full px-1 py-1 text-xs border border-gray-300 rounded"

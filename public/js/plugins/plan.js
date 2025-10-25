@@ -44,7 +44,9 @@ import { AbstractConfigurablePlugin, events as events2, utils as utils2 } from "
 // src/components/PlanComponent.ts
 import { AbstractComponent as AbstractComponent2, CONSTANTS as CONSTANTS2, events, utils } from "@photo-sphere-viewer/core";
 import { Control, Map, Marker, TileLayer } from "leaflet";
-import { MathUtils } from "three";
+// Avoid bundling another instance of three when PSV is already providing it.
+// If MathUtils is needed, prefer window.THREE.MathUtils when available.
+const MathUtils = (window.THREE && window.THREE.MathUtils) ? window.THREE.MathUtils : undefined;
 
 // src/constants.ts
 var OSM_LABEL = "OpenStreetMap";

@@ -93,7 +93,8 @@ import { AbstractConfigurablePlugin, events as events2, PSVError, utils as utils
 
 // src/GalleryComponent.ts
 import { AbstractComponent, CONSTANTS, events, utils as utils2 } from "@photo-sphere-viewer/core";
-import { MathUtils } from "three";
+// Avoid bundling another instance of three when PSV is already providing it.
+const MathUtils = (window.THREE && window.THREE.MathUtils) ? window.THREE.MathUtils : undefined;
 
 // src/constants.ts
 import { utils } from "@photo-sphere-viewer/core";
