@@ -32,6 +32,7 @@ class TourViewController extends Controller
                 'image' => $originalPath,
                 'url' => Storage::url($originalPath),
                 'thumbnail' => ThumbnailService::createThumbnail($originalPath, $thumbnailPath),
+                'hide_in_gallery' => (bool)($item['hide_in_gallery'] ?? false),
 
                 // Новые параметры камеры
                 'camera' => [
