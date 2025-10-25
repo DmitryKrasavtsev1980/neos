@@ -154,7 +154,7 @@
 
                             // Обработчик кликов
                             this.viewer.addEventListener('click', (event) => {
-                                if (this.mode === 'add-navigation' || this.mode === 'add-info') {
+                                if (this.mode === 'add-navigation' || this.mode === 'add-info' || this.mode === 'add-toggle') {
                                     this.addHotspot(event.data.yaw, event.data.pitch);
                                 }
                             });
@@ -210,14 +210,21 @@
                             html: hotspot.type === 'navigation'
                                 ? `<div style="position: relative;">
                                     <svg width="60" height="60" viewBox="0 0 60 60" style="cursor: pointer; filter: drop-shadow(0 4px 12px rgba(0,0,0,0.3));">
-                                        <circle cx="30" cy="30" r="25" fill="rgba(255,255,255,0.4)" stroke="white" stroke-width="6" style="backdrop-filter: blur(2px);"/>
+                                        <circle cx="30" cy="30" r="25" fill="rgba(0,0,0,0.2)" stroke="white" stroke-width="6" style="backdrop-filter: blur(2px);"/>
                                     </svg>
                                     <div style="position: absolute; top: 65px; left: 50%; transform: translateX(-50%); background: rgba(0,0,0,0.75); color: white; padding: 4px 12px; border-radius: 4px; white-space: nowrap; font-size: 13px; pointer-events: none;">${hotspot.tooltip || 'Переход'}</div>
                                 </div>`
-                                : `<svg width="60" height="60" viewBox="0 0 60 60" style="cursor: pointer; filter: drop-shadow(0 4px 12px rgba(0,0,0,0.3));">
-                                    <circle cx="30" cy="30" r="25" fill="rgba(255,255,255,0.4)" stroke="white" stroke-width="6" style="backdrop-filter: blur(2px);"/>
-                                    <text x="30" y="40" font-size="32" fill="black" text-anchor="middle" font-weight="bold" font-family="Arial, sans-serif">?</text>
-                                </svg>`,
+                                : hotspot.type === 'toggle'
+                                    ? `<div style="position: relative;">
+                                        <svg width="60" height="60" viewBox="0 0 60 60" style="cursor: pointer; filter: drop-shadow(0 4px 12px rgba(0,0,0,0.3));">
+                                            <circle cx="30" cy="30" r="25" fill="rgba(37,99,235,0.2)" stroke="white" stroke-width="6" style="backdrop-filter: blur(2px);"/>
+                                        </svg>
+                                        <div style="position: absolute; top: 65px; left: 50%; transform: translateX(-50%); background: rgba(0,0,0,0.75); color: white; padding: 4px 12px; border-radius: 4px; white-space: nowrap; font-size: 13px; pointer-events: none;">${hotspot.tooltip || 'Переключить'}</div>
+                                    </div>`
+                                    : `<svg width="60" height="60" viewBox="0 0 60 60" style="cursor: pointer; filter: drop-shadow(0 4px 12px rgba(0,0,0,0.3));">
+                                        <circle cx="30" cy="30" r="25" fill="rgba(255,255,255,0.4)" stroke="white" stroke-width="6" style="backdrop-filter: blur(2px);"/>
+                                        <text x="30" y="40" font-size="32" fill="black" text-anchor="middle" font-weight="bold" font-family="Arial, sans-serif">?</text>
+                                    </svg>`,
                             tooltip: hotspot.type === 'info' ? hotspot.tooltip : { content: hotspot.tooltip, className: 'hidden' },
                             data: hotspot
                         };
@@ -253,7 +260,7 @@
 
                     const baseHotspot = {
                         id: 'hotspot-' + Date.now(),
-                        type: this.mode === 'add-navigation' ? 'navigation' : 'info',
+                        type: this.mode === 'add-navigation' ? 'navigation' : (this.mode === 'add-toggle' ? 'toggle' : 'info'),
                         position: {
                             yaw: yawDeg,  // сохраняем в градусах!
                             pitch: pitchDeg // сохраняем в градусах!
@@ -265,7 +272,9 @@
                     const hotspot = (
                         baseHotspot.type === 'navigation'
                             ? { ...baseHotspot, target_panorama_id: '', target_camera: { yaw: 0, pitch: 0, zoom: 30 } }
-                            : { ...baseHotspot, content: { description: '' } }
+                            : baseHotspot.type === 'toggle'
+                                ? { ...baseHotspot, target_panorama_id: '' }
+                                : { ...baseHotspot, content: { description: '' } }
                     );
 
                     this.hotspots.push(hotspot);
@@ -411,6 +420,14 @@
                                     >
                                         ℹ️ Добавить метку
                                     </button>
+                                    <button
+                                        type="button"
+                                        @click="mode = 'add-toggle'"
+                                        :class="mode === 'add-toggle' ? 'bg-primary-600 text-white' : 'bg-white text-gray-700'"
+                                        class="w-full px-3 py-2 text-sm rounded-lg border transition-colors"
+                                    >
+                                        🔁 Добавить переключение
+                                    </button>
                                 </div>
                             </div>
 
@@ -528,6 +545,29 @@
                                                             />
                                                         </div>
                                                     </div>
+                                                </div>
+                                            </div>
+                                        </template>
+
+                                        <!-- Настройки для toggle hotspot -->
+                                        <template x-if="hotspots[selectedHotspotIndex].type === 'toggle'">
+                                            <div class="space-y-3">
+                                                <div>
+                                                    <label class="block text-xs font-medium text-gray-700 mb-1">Целевая панорама</label>
+                                                    <select
+                                                        :value="hotspots[selectedHotspotIndex]?.target_panorama_id || ''"
+                                                        @change="updateSelectedHotspot('target_panorama_id', $event.target.value)"
+                                                        class="w-full px-2 py-1 text-sm border border-gray-300 rounded focus:ring-1 focus:ring-primary-500 focus:border-primary-500"
+                                                    >
+                                                        <option value="">-- Выберите панораму --</option>
+                                                        <template x-for="pano in allPanoramas" :key="pano.id">
+                                                            <option
+                                                                :value="pano.id"
+                                                                x-text="pano.title"
+                                                                :selected="String(pano.id) === String(hotspots[selectedHotspotIndex]?.target_panorama_id || '')"
+                                                            ></option>
+                                                        </template>
+                                                    </select>
                                                 </div>
                                             </div>
                                         </template>

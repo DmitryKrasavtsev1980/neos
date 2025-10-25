@@ -175,7 +175,9 @@
             console.log('==================');
 
             // Подготавливаем данные для Gallery плагина
-            const galleryItems = panoramas.map(panorama => ({
+            const galleryItems = panoramas
+                .filter(p => !p.hide_in_gallery)
+                .map(panorama => ({
                 id: panorama.id.toString(),
                 panorama: panorama.url,
                 thumbnail: panorama.thumbnail,
@@ -260,6 +262,9 @@
                 plugins: plugins
             });
 
+            // Флаг подавления анимации при программном переключении (toggle)
+            let suppressNextPanoramaAnimation = false;
+
             // Получаем MarkersPlugin
             let markersPlugin = null;
             if (PhotoSphereViewer.MarkersPlugin) {
@@ -284,7 +289,8 @@
                             pitch: (hotspot.position.pitch || 0) * Math.PI / 180
                         },
                         html: '',
-                        data: hotspot
+                        // Встраиваем ID исходной панорамы для корректного возврата
+                        data: { ...hotspot, origin_panorama_id: panorama.id }
                     };
 
                     // Разные стили для разных типов hotspots
@@ -292,7 +298,7 @@
                         markerConfig.html = `
                             <div style="position: relative;">
                                 <svg width="60" height="60" viewBox="0 0 60 60" style="cursor: pointer; filter: drop-shadow(0 4px 12px rgba(0,0,0,0.4)); transition: transform 0.2s;" onmouseover="this.style.transform='scale(1.15)'" onmouseout="this.style.transform='scale(1)'">
-                                    <circle cx="30" cy="30" r="25" fill="rgba(255,255,255,0.4)" stroke="white" stroke-width="6"/>
+                                    <circle cx="30" cy="30" r="25" fill="rgba(0,0,0,0.2)" stroke="white" stroke-width="6"/>
                                 </svg>
                                 <div style="position: absolute; top: 65px; left: 50%; transform: translateX(-50%); background: rgba(0,0,0,0.8); color: white; padding: 6px 14px; border-radius: 6px; white-space: nowrap; font-size: 14px; font-weight: 500; pointer-events: none; box-shadow: 0 2px 8px rgba(0,0,0,0.3);">
                                     ${hotspot.tooltip || 'Переход'}
@@ -307,6 +313,19 @@
                             </svg>
                         `;
                         markerConfig.tooltip = hotspot.tooltip || 'Информация';
+                    } else if (hotspot.type === 'toggle') {
+                        // Переключатель: круг как у перехода, но с синим внутренним цветом и постоянной подписью
+                        markerConfig.html = `
+                            <div style="position: relative;">
+                                <svg width="60" height="60" viewBox="0 0 60 60" style="cursor: pointer; filter: drop-shadow(0 4px 12px rgba(0,0,0,0.4)); transition: transform 0.2s;" onmouseover="this.style.transform='scale(1.15)'" onmouseout="this.style.transform='scale(1)'">
+                                    <circle cx="30" cy="30" r="25" fill="rgba(37,99,235,0.2)" stroke="white" stroke-width="6"/>
+                                </svg>
+                                <div style="position: absolute; top: 65px; left: 50%; transform: translateX(-50%); background: rgba(0,0,0,0.8); color: white; padding: 6px 14px; border-radius: 6px; white-space: nowrap; font-size: 14px; font-weight: 500; pointer-events: none; box-shadow: 0 2px 8px rgba(0,0,0,0.3);">
+                                    ${hotspot.tooltip || 'Переключить панораму'}
+                                </div>
+                            </div>
+                        `;
+                        markerConfig.tooltip = hotspot.tooltip || 'Переключить панораму';
                     }
 
                     markersPlugin.addMarker(markerConfig);
@@ -432,6 +451,54 @@
                     } else if (hotspot.type === 'info') {
                         // Можно добавить модальное окно с информацией
                         console.log('Info hotspot clicked:', hotspot);
+                    } else if (hotspot.type === 'toggle' && hotspot.target_panorama_id) {
+                        // Мгновенное переключение между текущей и целевой панорамой
+                        const currentUrl = viewer.config.panorama;
+                        const current = panoramas.find(p => p.url === currentUrl) || firstPanorama;
+                        const target = panoramas.find(p => p.id === hotspot.target_panorama_id);
+                        if (!target) return;
+
+                        // Текущая камера в градусах на момент клика
+                        const pos = viewer.getPosition();
+                        const yawDeg = pos.yaw * 180 / Math.PI;
+                        const pitchDeg = pos.pitch * 180 / Math.PI;
+                        const zoom = viewer.getZoomLevel();
+
+                        // Исходная панорама для этого переключателя
+                        const originId = marker.data.origin_panorama_id || current.id;
+                        const origin = panoramas.find(p => p.id === originId) || firstPanorama;
+
+                        if (current && current.id === hotspot.target_panorama_id) {
+                            // Возврат на исходную панораму с тем же углом обзора, что был при первом переключении
+                            const originCam = marker.data._origin_camera;
+                            const backYaw = (originCam?.yaw ?? yawDeg) * Math.PI / 180;
+                            const backPitch = (originCam?.pitch ?? pitchDeg) * Math.PI / 180;
+                            const backZoom = originCam?.zoom ?? zoom;
+
+                            // Подавить анимацию позиции, задать точный ракурс
+                            suppressNextPanoramaAnimation = true;
+                            viewer.setPanorama(origin.url, {
+                                transition: { speed: 0, effect: 'fade' },
+                                position: { yaw: backYaw, pitch: backPitch },
+                                zoom: backZoom,
+                                caption: '{{ $tour->name }} <b>&bull;</b> ' + origin.title
+                            }).then(() => {
+                                renderHotspots(origin);
+                            });
+                        } else {
+                            // Переход на целевую панораму: запомнить камеру исходной
+                            marker.data._origin_camera = { yaw: yawDeg, pitch: pitchDeg, zoom };
+
+                            suppressNextPanoramaAnimation = true;
+                            viewer.setPanorama(target.url, {
+                                transition: { speed: 0, effect: 'fade' },
+                                position: { yaw: yawDeg * Math.PI / 180, pitch: pitchDeg * Math.PI / 180 },
+                                zoom,
+                                caption: '{{ $tour->name }} <b>&bull;</b> ' + target.title
+                            }).then(() => {
+                                renderHotspots(target);
+                            });
+                        }
                     }
                 });
             }
@@ -457,24 +524,29 @@
             viewer.addEventListener('panorama-loaded', () => {
                 // Получаем текущую панораму по URL
                 const currentUrl = viewer.config.panorama;
-                const currentPanorama = panoramas.find(p => currentUrl.includes(p.image));
+                const currentPanorama = panoramas.find(p => p.url === currentUrl);
 
-                if (currentPanorama) {
-                    console.log('Панорама загружена через Gallery:', currentPanorama.title);
+                if (!currentPanorama) return;
 
-                    // Устанавливаем правильную позицию камеры
-                viewer.animate({
-                        // API ожидает значения в радианах
-                        yaw: (currentPanorama.camera?.yaw || 0) * Math.PI / 180,
-                        pitch: (currentPanorama.camera?.pitch || 0) * Math.PI / 180,
-                        zoom: currentPanorama.camera?.zoom || 30,
-                        speed: '20rpm'
-                    }).then(() => {
-                        // Отображаем hotspots после установки камеры
-                        console.log('Камера установлена, отображаем hotspots...');
-                        renderHotspots(currentPanorama);
-                    });
+                if (suppressNextPanoramaAnimation) {
+                    // Пропустить анимацию камеры, просто перерендерить хотспоты
+                    suppressNextPanoramaAnimation = false;
+                    renderHotspots(currentPanorama);
+                    return;
                 }
+
+                console.log('Панорама загружена через Gallery:', currentPanorama.title);
+
+                // Устанавливаем правильную позицию камеры (только для действий галереи)
+                viewer.animate({
+                    yaw: (currentPanorama.camera?.yaw || 0) * Math.PI / 180,
+                    pitch: (currentPanorama.camera?.pitch || 0) * Math.PI / 180,
+                    zoom: currentPanorama.camera?.zoom || 30,
+                    speed: '20rpm'
+                }).then(() => {
+                    console.log('Камера установлена, отображаем hotspots...');
+                    renderHotspots(currentPanorama);
+                });
             });
             @endif
 

@@ -116,6 +116,11 @@ class TourResource extends Resource
                                 ->maxLength(255)
                                 ->columnSpanFull(),
 
+                            Toggle::make('hide_in_gallery')
+                                ->label('Скрыть в галерее')
+                                ->inline(false)
+                                ->default(false),
+
                             FileUpload::make('pano')
                                 ->label('Панорама (360° изображение)')
                                 ->disk('public')
