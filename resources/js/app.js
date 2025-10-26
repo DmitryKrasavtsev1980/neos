@@ -1,4 +1,4 @@
-// Do not initialize Alpine here — Filament manages Alpine and its plugins.
+// Frontend JS entry.
 // Provide Photo Sphere Viewer modules globally for admin/editor pages.
 
 import { Viewer } from '@photo-sphere-viewer/core';
@@ -24,4 +24,11 @@ console.log('PSV loaded:', {
   MapPlugin: !!MapPlugin,
 });
 
+// Initialize Alpine on frontend pages.
+// If Alpine is already present (e.g., Filament-managed), do not reinitialize.
+import Alpine from 'alpinejs';
 
+if (!window.Alpine || !window.Alpine.version) {
+  window.Alpine = Alpine;
+  Alpine.start();
+}
