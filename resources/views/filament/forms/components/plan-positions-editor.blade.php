@@ -98,7 +98,7 @@
 
                 handlePlanClick(event) {
                     if (this.selectedPanoramaIndex === null) {
-                        alert('Сначала выберите панораму из списка слева');
+                        console.warn('Сначала выберите панораму из списка слева');
                         return;
                     }
 
@@ -127,8 +127,7 @@
                     // Находим все поля plan_position в repeater и обновляем их
                     const form = this.$root.closest('form');
                     if (!form) {
-                        console.error('Форма не найдена');
-                        alert('❌ Ошибка: форма не найдена');
+                        console.error('❌ Ошибка: форма не найдена');
                         return;
                     }
 
@@ -146,7 +145,6 @@
                     // Проверяем соответствие количества
                     if (planPositionInputs.length !== this.panoramas.length) {
                         console.error(`❌ Несоответствие: ${this.panoramas.length} панорам, но ${planPositionInputs.length} полей plan_position`);
-                        alert(`❌ Ошибка!\n\nНайдено ${planPositionInputs.length} полей, но панорам ${this.panoramas.length}.\nПопробуйте сохранить форму и открыть редактор заново.`);
                         return;
                     }
 
@@ -173,10 +171,10 @@
                     });
 
                     if (savedCount > 0) {
-                        alert(`✅ Успешно!\n\nПозиции панорам сохранены (${savedCount} из ${this.panoramas.length}).\n\nНе забудьте нажать главную кнопку "Save" для сохранения в базу данных.`);
+                        console.log(`✅ Позиции панорам сохранены (${savedCount} из ${this.panoramas.length}).`);
                         this.closeEditor();
                     } else {
-                        alert('❌ Ошибка!\n\nНе удалось сохранить позиции.\nПроверьте консоль для деталей.');
+                        console.error('❌ Не удалось сохранить позиции. Проверьте консоль для деталей.');
                     }
                 }
             };

@@ -199,17 +199,18 @@
             }
 
             // Gallery плагин для навигации между панорамами
-            @if(count($panoramas) > 1)
             if (PhotoSphereViewer.GalleryPlugin) {
-                plugins.push(
-                    PhotoSphereViewer.GalleryPlugin.withConfig({
-                        items: galleryItems,
-                        hideOnClick: true,
-                        visibleOnLoad: true
-                    })
-                );
+                const hasMultiple = Array.isArray(galleryItems) && galleryItems.length > 1;
+                if (hasMultiple) {
+                    plugins.push(
+                        PhotoSphereViewer.GalleryPlugin.withConfig({
+                            items: galleryItems,
+                            hideOnClick: true,
+                            visibleOnLoad: false
+                        })
+                    );
+                }
             }
-            @endif
 
             // Простое отображение планировки без Map плагина
             // Map плагин всегда показывает позицию панорамы, поэтому используем HTML элемент
@@ -334,7 +335,8 @@
                                 </div>
                             </div>
                         `;
-                        markerConfig.tooltip = hotspot.tooltip || 'Переключить панораму';
+                        // Отключаем всплывающую подсказку у переключателя — подпись уже есть под иконкой
+                        markerConfig.tooltip = '';
                     }
 
                     markersPlugin.addMarker(markerConfig);
@@ -587,4 +589,3 @@
     </script>
 </body>
 </html>
-            // (калибровка и локальные корректировки удалены из просмотра; применяются значения из данных панорамы)

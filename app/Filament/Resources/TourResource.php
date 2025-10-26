@@ -239,9 +239,9 @@ class TourResource extends Resource
                                 ])
                                 ->columns(2),
 
-                            // Текстовое поле для хранения hotspots (скрыто через CSS)
+                            // Текстовое поле для хранения hotspots (скрыто)
                             TextInput::make('hotspots')
-                                ->label('Hotspots JSON')
+                                ->label('')
                                 ->default('[]')
                                 ->extraAttributes(['style' => 'display:none'])
                                 ->extraInputAttributes(['data-hotspots-field' => 'true'])

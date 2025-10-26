@@ -8,18 +8,7 @@
     }
 @endphp
 
-{{-- DEBUG --}}
-@if(config('app.debug'))
-<div class="p-2 bg-blue-50 rounded text-xs mb-2">
-    <strong>Debug:</strong><br>
-    panoramaUrl type: {{ gettype($panoramaUrl) }}<br>
-    panoramaUrl: {{ json_encode($panoramaUrl) }}<br>
-    panoPath: {{ $panoPath }}<br>
-    panoramaId: {{ $panoramaId }}<br>
-    existingHotspots: {{ json_encode($existingHotspots) }}<br>
-    allPanoramas: {{ json_encode($allPanoramas ?? []) }}
-</div>
-@endif
+{{-- Debug info removed from edit form --}}
 
 @if($panoPath)
 @once
@@ -170,7 +159,7 @@
                             console.log('Photo Sphere Viewer с MarkersPlugin инициализирован');
                         } catch (error) {
                             console.error('Ошибка инициализации viewer:', error);
-                            alert('Ошибка загрузки панорамы: ' + error.message);
+                            // alert удалён; оставляем лог в консоли
                         }
                     };
 
@@ -320,10 +309,9 @@
 
                         console.log('✅ Hotspots сохранены в поле:', hotspotsInput);
 
-                        alert('Точки навигации сохранены локально! Нажмите главную кнопку "Save" чтобы сохранить весь тур в базу данных.');
+                        // alert удалён; информация доступна в консоли
                         this.closeEditor();
                     } else {
-                        alert('Ошибка: не удалось найти поле для сохранения');
                         console.error('❌ Поле hotspots не найдено при сохранении');
                     }
                 }
