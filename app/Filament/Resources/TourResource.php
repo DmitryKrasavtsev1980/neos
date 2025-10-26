@@ -184,6 +184,29 @@ class TourResource extends Resource
                                 ])
                                 ->columns(3),
 
+                            // Калибровка ориентации (для точного совпадения хотспотов между дублями)
+                            Fieldset::make('Калибровка ориентации')
+                                ->schema([
+                                    TextInput::make('calibration.pan')
+                                        ->label('Поворот (pan)')
+                                        ->numeric()
+                                        ->default(0)
+                                        ->suffix('°')
+                                        ->minValue(-10)
+                                        ->maxValue(10)
+                                        ->helperText('Мелкая корректировка базового направления (−10…10°)'),
+
+                                    TextInput::make('calibration.tilt')
+                                        ->label('Наклон (tilt)')
+                                        ->numeric()
+                                        ->default(0)
+                                        ->suffix('°')
+                                        ->minValue(-10)
+                                        ->maxValue(10)
+                                        ->helperText('Мелкая корректировка горизонта (−10…10°)'),
+                                ])
+                                ->columns(2),
+
                             // Настройки автовращения
                             Fieldset::make('Автовращение')
                                 ->schema([

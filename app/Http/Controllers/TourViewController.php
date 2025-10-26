@@ -49,6 +49,12 @@ class TourViewController extends Controller
                     'pitch' => $item['autorotate']['pitch'] ?? 0,
                 ],
 
+                // Калибровка ориентации (применяется как sphereCorrection)
+                'calibration' => [
+                    'pan' => isset($item['calibration']['pan']) ? (float)$item['calibration']['pan'] : 0.0,
+                    'tilt' => isset($item['calibration']['tilt']) ? (float)$item['calibration']['tilt'] : 0.0,
+                ],
+
                 // Hotspots для навигации и информации
                 'hotspots' => $item['hotspots'] ?? [],
 

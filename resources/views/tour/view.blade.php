@@ -121,6 +121,8 @@
                 max-height: calc(100vh - 120px);
             }
         }
+
+        /* calibration UI удалён из просмотра */
     </style>
 </head>
 <body>
@@ -138,6 +140,8 @@
         </div>
     </div>
     @endif
+
+    <!-- calibration UI удалён из просмотра -->
 
     <script>
         // Функция для показа/скрытия планировки
@@ -223,6 +227,8 @@
             };
             @endif
 
+            // (калибровка осуществляется в интерфейсе редактирования тура)
+
             // Инициализация Photo Sphere Viewer с плагинами
             const viewer = new PhotoSphereViewer.Viewer({
                 container: document.querySelector('#viewer'),
@@ -264,6 +270,9 @@
 
             // Флаг подавления анимации при программном переключении (toggle)
             let suppressNextPanoramaAnimation = false;
+
+            // Вспомогательная функция: градусы → радианы
+            function degToRad(d) { return d * Math.PI / 180; }
 
             // Получаем MarkersPlugin
             let markersPlugin = null;
@@ -429,6 +438,11 @@
                         pitch: cameraPitch
                     },
                     zoom: cameraZoom,
+                    sphereCorrection: {
+                        pan: degToRad(targetPanorama.calibration?.pan || 0),
+                        tilt: degToRad(targetPanorama.calibration?.tilt || 0),
+                        roll: 0
+                    },
                     caption: '{{ $tour->name }} <b>&bull;</b> ' + targetPanorama.title
                 }).then(() => {
                     // Отображаем hotspots для новой панорамы
@@ -469,11 +483,11 @@
                         const origin = panoramas.find(p => p.id === originId) || firstPanorama;
 
                         if (current && current.id === hotspot.target_panorama_id) {
-                            // Возврат на исходную панораму с тем же углом обзора, что был при первом переключении
-                            const originCam = marker.data._origin_camera;
-                            const backYaw = (originCam?.yaw ?? yawDeg) * Math.PI / 180;
-                            const backPitch = (originCam?.pitch ?? pitchDeg) * Math.PI / 180;
-                            const backZoom = originCam?.zoom ?? zoom;
+                        // Возврат на исходную панораму с тем же углом обзора, что был при первом переключении
+                        const originCam = marker.data._origin_camera;
+                        const backYaw = (originCam?.yaw ?? yawDeg) * Math.PI / 180;
+                        const backPitch = (originCam?.pitch ?? pitchDeg) * Math.PI / 180;
+                        const backZoom = originCam?.zoom ?? zoom;
 
                             // Подавить анимацию позиции, задать точный ракурс
                             suppressNextPanoramaAnimation = true;
@@ -481,6 +495,11 @@
                                 transition: { speed: 0, effect: 'fade' },
                                 position: { yaw: backYaw, pitch: backPitch },
                                 zoom: backZoom,
+                                sphereCorrection: {
+                                    pan: degToRad(origin.calibration?.pan || 0),
+                                    tilt: degToRad(origin.calibration?.tilt || 0),
+                                    roll: 0
+                                },
                                 caption: '{{ $tour->name }} <b>&bull;</b> ' + origin.title
                             }).then(() => {
                                 renderHotspots(origin);
@@ -494,6 +513,11 @@
                                 transition: { speed: 0, effect: 'fade' },
                                 position: { yaw: yawDeg * Math.PI / 180, pitch: pitchDeg * Math.PI / 180 },
                                 zoom,
+                                sphereCorrection: {
+                                    pan: degToRad(target.calibration?.pan || 0),
+                                    tilt: degToRad(target.calibration?.tilt || 0),
+                                    roll: 0
+                                },
                                 caption: '{{ $tour->name }} <b>&bull;</b> ' + target.title
                             }).then(() => {
                                 renderHotspots(target);
@@ -507,6 +531,7 @@
             viewer.addEventListener('ready', () => {
                 console.log('Viewer готов, отрисовываем hotspots для первой панорамы...');
                 renderHotspots(firstPanorama);
+                // Коррекция для первой панорамы задаётся через sphereCorrection при последующих setPanorama
 
                 // TODO: Автовращение для первой панорамы (требует AutorotatePlugin)
                 // if (firstPanorama.autorotate?.enabled) {
@@ -527,6 +552,8 @@
                 const currentPanorama = panoramas.find(p => p.url === currentUrl);
 
                 if (!currentPanorama) return;
+
+                // Коррекция применяется через setPanorama
 
                 if (suppressNextPanoramaAnimation) {
                     // Пропустить анимацию камеры, просто перерендерить хотспоты
@@ -560,3 +587,4 @@
     </script>
 </body>
 </html>
+            // (калибровка и локальные корректировки удалены из просмотра; применяются значения из данных панорамы)
