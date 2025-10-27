@@ -26,9 +26,9 @@ console.log('PSV loaded:', {
 
 // Initialize Alpine on frontend pages.
 // If Alpine is already present (e.g., Filament-managed), do not reinitialize.
-import Alpine from 'alpinejs';
+//import Alpine from 'alpinejs';
 
-if (!window.Alpine || !window.Alpine.version) {
-  window.Alpine = Alpine;
-  Alpine.start();
-}
+//if (!window.Alpine || !window.Alpine.version) {
+//  window.Alpine = Alpine;
+//  Alpine.start();
+//}
