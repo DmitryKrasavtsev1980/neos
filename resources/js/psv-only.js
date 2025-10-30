@@ -1,5 +1,7 @@
-// Frontend JS entry - for all pages (frontend and admin)
-import Alpine from 'alpinejs';
+// Photo Sphere Viewer only - for Filament admin panel
+// This file loads ONLY PhotoSphereViewer without Alpine.js
+// Alpine.js is already provided by Filament
+
 import { Viewer } from '@photo-sphere-viewer/core';
 import '@photo-sphere-viewer/core/index.css';
 import { MarkersPlugin } from '@photo-sphere-viewer/markers-plugin';
@@ -17,16 +19,9 @@ window.PhotoSphereViewer = {
   MapPlugin,
 };
 
-console.log('PSV loaded:', {
+console.log('PSV loaded for admin (without Alpine):', {
   Viewer: !!Viewer,
   MarkersPlugin: !!MarkersPlugin,
   GalleryPlugin: !!GalleryPlugin,
   MapPlugin: !!MapPlugin,
 });
-
-// Initialize Alpine for frontend pages only (Filament has its own Alpine)
-if (!window.Alpine || !window.Alpine.version) {
-  window.Alpine = Alpine;
-  Alpine.start();
-  console.log('Alpine.js initialized for frontend');
-}

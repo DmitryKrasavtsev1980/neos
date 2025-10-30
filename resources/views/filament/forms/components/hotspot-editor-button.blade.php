@@ -12,8 +12,8 @@
 
 @if($panoPath)
 @once
-    <!-- Use Vite bundle that exposes window.PhotoSphereViewer to avoid duplicate Three.js -->
-    @vite(['resources/js/app.js'])
+    <!-- Load PhotoSphereViewer for admin panel (without Alpine - Filament provides it) -->
+    @vite(['resources/js/psv-only.js'])
 
     <!-- Alpine x-cloak стили -->
     <style>
@@ -97,9 +97,10 @@
                 openEditor() {
                     console.log('Открытие редактора hotspots...');
                     this.editorOpen = true;
-                    this.$nextTick(() => {
+                    // Даем время модальному окну отобразиться и контейнеру получить размеры
+                    setTimeout(() => {
                         this.initViewer();
-                    });
+                    }, 300);
                 },
 
                 closeEditor() {
@@ -214,7 +215,7 @@
                                         <circle cx="30" cy="30" r="25" fill="rgba(255,255,255,0.4)" stroke="white" stroke-width="6" style="backdrop-filter: blur(2px);"/>
                                         <text x="30" y="40" font-size="32" fill="black" text-anchor="middle" font-weight="bold" font-family="Arial, sans-serif">?</text>
                                     </svg>`,
-                            tooltip: hotspot.type === 'info' ? hotspot.tooltip : { content: hotspot.tooltip, className: 'hidden' },
+                            tooltip: hotspot.type === 'info' ? (hotspot.tooltip || 'Информация') : { content: hotspot.tooltip || '', className: 'hidden' },
                             data: hotspot
                         };
 
@@ -321,7 +322,7 @@
 @endonce
 
 <div
-    x-data="createHotspotEditor({{ json_encode($panoPath) }}, {{ json_encode($panoramaId) }}, {{ json_encode($allPanoramas ?? []) }}, {{ json_encode($existingHotspots ?? []) }})"
+    x-data="createHotspotEditor(@js($panoPath), @js($panoramaId), @js($allPanoramas ?? []), @js($existingHotspots ?? []))"
 >
     <div class="space-y-2">
         <button
@@ -436,7 +437,7 @@
                                                 <div class="flex-1">
                                                     <div class="font-medium">
                                                         <span x-text="hotspot.type === 'navigation' ? '➡️' : 'ℹ️'"></span>
-                                                        <span x-text="hotspot.tooltip"></span>
+                                                        <span x-text="hotspot.tooltip || 'Без названия'"></span>
                                                     </div>
                                                     <div class="text-xs text-gray-500 mt-1">
                                                         Yaw: <span x-text="hotspot.position.yaw.toFixed(1)"></span>°
@@ -472,7 +473,7 @@
                                             <label class="block text-xs font-medium text-gray-700 mb-1">Название</label>
                                             <input
                                                 type="text"
-                                                :value="hotspots[selectedHotspotIndex].tooltip"
+                                                :value="hotspots[selectedHotspotIndex]?.tooltip || ''"
                                                 @input="updateSelectedHotspot('tooltip', $event.target.value)"
                                                 class="w-full px-2 py-1 text-sm border border-gray-300 rounded focus:ring-1 focus:ring-primary-500 focus:border-primary-500"
                                             />

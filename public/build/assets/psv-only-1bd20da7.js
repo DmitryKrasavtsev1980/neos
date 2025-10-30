@@ -1,0 +1,1 @@
+import{V as e,M as i,G as l,a}from"./index-c54b7c43.js";window.PhotoSphereViewer={Viewer:e,MarkersPlugin:i,GalleryPlugin:l,MapPlugin:a};console.log("PSV loaded for admin (without Alpine):",{Viewer:!!e,MarkersPlugin:!!i,GalleryPlugin:!!l,MapPlugin:!!a});

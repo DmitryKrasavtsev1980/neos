@@ -183,7 +183,7 @@
 @endonce
 
 <div
-    x-data="createPlanPositionsEditor({{ json_encode($floorPlanPath) }}, {{ json_encode($panoramasList) }})"
+    x-data="createPlanPositionsEditor(@js($floorPlanPath), @js($panoramasList))"
 >
     <div class="space-y-2">
         <button

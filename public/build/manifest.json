@@ -1,19 +1,33 @@
 {
+  "_index-c54b7c43.js": {
+    "css": [
+      "assets/index-a1c28488.css"
+    ],
+    "file": "assets/index-c54b7c43.js"
+  },
+  "index.css": {
+    "file": "assets/index-a1c28488.css",
+    "src": "index.css"
+  },
   "resources/css/app.css": {
     "file": "assets/app-b801221d.css",
     "isEntry": true,
     "src": "resources/css/app.css"
   },
-  "resources/js/app.css": {
-    "file": "assets/app-a1c28488.css",
-    "src": "resources/js/app.css"
-  },
   "resources/js/app.js": {
-    "css": [
-      "assets/app-a1c28488.css"
+    "file": "assets/app-07698433.js",
+    "imports": [
+      "_index-c54b7c43.js"
     ],
-    "file": "assets/app-50e9ee54.js",
     "isEntry": true,
     "src": "resources/js/app.js"
+  },
+  "resources/js/psv-only.js": {
+    "file": "assets/psv-only-1bd20da7.js",
+    "imports": [
+      "_index-c54b7c43.js"
+    ],
+    "isEntry": true,
+    "src": "resources/js/psv-only.js"
   }
 }
