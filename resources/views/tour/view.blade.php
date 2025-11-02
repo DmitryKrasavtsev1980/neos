@@ -537,18 +537,6 @@
                             preloaded: preloadedPanoramas.get(target.url)
                         });
 
-                        // Проверяем загружена ли целевая панорама
-                        const isPreloaded = preloadedPanoramas.get(target.url) === true;
-
-                        // Если панорама ещё не загружена, запускаем загрузку и показываем loader
-                        if (!isPreloaded) {
-                            console.warn('⚠️ Панорама ещё не загружена, ждём...');
-                            // Запускаем предзагрузку если она ещё не началась
-                            if (!preloadedPanoramas.has(target.url)) {
-                                preloadPanorama(target.url);
-                            }
-                        }
-
                         // Текущая камера в градусах на момент клика
                         const pos = viewer.getPosition();
                         const yawDeg = pos.yaw * 180 / Math.PI;
@@ -559,46 +547,69 @@
                         const originId = marker.data.origin_panorama_id || current.id;
                         const origin = panoramas.find(p => p.id === originId) || firstPanorama;
 
-                        if (current && current.id === hotspot.target_panorama_id) {
-                        // Возврат на исходную панораму с тем же углом обзора, что был при первом переключении
-                        const originCam = marker.data._origin_camera;
-                        const backYaw = (originCam?.yaw ?? yawDeg) * Math.PI / 180;
-                        const backPitch = (originCam?.pitch ?? pitchDeg) * Math.PI / 180;
-                        const backZoom = originCam?.zoom ?? zoom;
-
-                            // Подавить анимацию позиции, задать точный ракурс
+                        // Функция переключения на панораму
+                        const switchToPanorama = (pano, position, zoom) => {
                             suppressNextPanoramaAnimation = true;
-                            viewer.setPanorama(origin.url, {
-                                transition: false, // Полностью отключаем переход
-                                showLoader: !isPreloaded, // Показываем loader только если не предзагружена
-                                position: { yaw: backYaw, pitch: backPitch },
-                                zoom: backZoom,
+                            viewer.setPanorama(pano.url, {
+                                transition: false,
+                                showLoader: true,
+                                position: position,
+                                zoom: zoom,
                                 sphereCorrection: {
-                                    pan: degToRad(origin.calibration?.pan || 0),
-                                    tilt: degToRad(origin.calibration?.tilt || 0),
+                                    pan: degToRad(pano.calibration?.pan || 0),
+                                    tilt: degToRad(pano.calibration?.tilt || 0),
                                     roll: 0
                                 },
-                                caption: '{{ $tour->name }} <b>&bull;</b> ' + origin.title
+                                caption: '{{ $tour->name }} <b>&bull;</b> ' + pano.title
                             });
-                            // renderHotspots вызовется в обработчике panorama-loaded
+                        };
+
+                        if (current && current.id === hotspot.target_panorama_id) {
+                            // Возврат на исходную панораму
+                            const originCam = marker.data._origin_camera;
+                            const backYaw = (originCam?.yaw ?? yawDeg) * Math.PI / 180;
+                            const backPitch = (originCam?.pitch ?? pitchDeg) * Math.PI / 180;
+                            const backZoom = originCam?.zoom ?? zoom;
+
+                            // Проверяем загружена ли панорама
+                            const isPreloaded = preloadedPanoramas.get(origin.url) === true;
+
+                            if (isPreloaded) {
+                                // Мгновенное переключение
+                                switchToPanorama(origin, { yaw: backYaw, pitch: backPitch }, backZoom);
+                            } else {
+                                // Ждём предзагрузки
+                                console.warn('⚠️ Ожидание загрузки панорамы:', origin.title);
+                                viewer.textureLoader.preloadPanorama(origin.url).then(() => {
+                                    preloadedPanoramas.set(origin.url, true);
+                                    switchToPanorama(origin, { yaw: backYaw, pitch: backPitch }, backZoom);
+                                }).catch(err => {
+                                    console.error('❌ Ошибка загрузки панорамы:', err);
+                                });
+                            }
                         } else {
-                            // Переход на целевую панораму: запомнить камеру исходной
+                            // Переход на целевую панораму
                             marker.data._origin_camera = { yaw: yawDeg, pitch: pitchDeg, zoom };
 
-                            suppressNextPanoramaAnimation = true;
-                            viewer.setPanorama(target.url, {
-                                transition: false, // Полностью отключаем переход
-                                showLoader: !isPreloaded, // Показываем loader только если не предзагружена
-                                position: { yaw: yawDeg * Math.PI / 180, pitch: pitchDeg * Math.PI / 180 },
-                                zoom,
-                                sphereCorrection: {
-                                    pan: degToRad(target.calibration?.pan || 0),
-                                    tilt: degToRad(target.calibration?.tilt || 0),
-                                    roll: 0
-                                },
-                                caption: '{{ $tour->name }} <b>&bull;</b> ' + target.title
-                            });
-                            // renderHotspots вызовется в обработчике panorama-loaded
+                            const targetYaw = yawDeg * Math.PI / 180;
+                            const targetPitch = pitchDeg * Math.PI / 180;
+
+                            // Проверяем загружена ли панорама
+                            const isPreloaded = preloadedPanoramas.get(target.url) === true;
+
+                            if (isPreloaded) {
+                                // Мгновенное переключение
+                                switchToPanorama(target, { yaw: targetYaw, pitch: targetPitch }, zoom);
+                            } else {
+                                // Ждём предзагрузки
+                                console.warn('⚠️ Ожидание загрузки панорамы:', target.title);
+                                viewer.textureLoader.preloadPanorama(target.url).then(() => {
+                                    preloadedPanoramas.set(target.url, true);
+                                    switchToPanorama(target, { yaw: targetYaw, pitch: targetPitch }, zoom);
+                                }).catch(err => {
+                                    console.error('❌ Ошибка загрузки панорамы:', err);
+                                });
+                            }
                         }
                     }
                 });
