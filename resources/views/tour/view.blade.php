@@ -537,6 +537,18 @@
                             preloaded: preloadedPanoramas.get(target.url)
                         });
 
+                        // Проверяем загружена ли целевая панорама
+                        const isPreloaded = preloadedPanoramas.get(target.url) === true;
+
+                        // Если панорама ещё не загружена, запускаем загрузку и показываем loader
+                        if (!isPreloaded) {
+                            console.warn('⚠️ Панорама ещё не загружена, ждём...');
+                            // Запускаем предзагрузку если она ещё не началась
+                            if (!preloadedPanoramas.has(target.url)) {
+                                preloadPanorama(target.url);
+                            }
+                        }
+
                         // Текущая камера в градусах на момент клика
                         const pos = viewer.getPosition();
                         const yawDeg = pos.yaw * 180 / Math.PI;
@@ -558,7 +570,7 @@
                             suppressNextPanoramaAnimation = true;
                             viewer.setPanorama(origin.url, {
                                 transition: false, // Полностью отключаем переход
-                                showLoader: false, // Не показываем loader
+                                showLoader: !isPreloaded, // Показываем loader только если не предзагружена
                                 position: { yaw: backYaw, pitch: backPitch },
                                 zoom: backZoom,
                                 sphereCorrection: {
@@ -576,7 +588,7 @@
                             suppressNextPanoramaAnimation = true;
                             viewer.setPanorama(target.url, {
                                 transition: false, // Полностью отключаем переход
-                                showLoader: false, // Не показываем loader
+                                showLoader: !isPreloaded, // Показываем loader только если не предзагружена
                                 position: { yaw: yawDeg * Math.PI / 180, pitch: pitchDeg * Math.PI / 180 },
                                 zoom,
                                 sphereCorrection: {
