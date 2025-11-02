@@ -108,6 +108,18 @@
 
         /* Мобильные устройства */
         @media (max-width: 768px) {
+            /* Корректируем высоту viewer чтобы navbar влезала */
+            #viewer {
+                height: 100dvh !important; /* dvh учитывает мобильные панели браузера */
+            }
+
+            /* Гарантируем что navbar видна */
+            .psv-container .psv-navbar {
+                position: absolute !important;
+                bottom: 0 !important;
+            }
+
+            /* Планировка */
             .floor-plan-overlay {
                 top: 10px;
                 right: 10px;
