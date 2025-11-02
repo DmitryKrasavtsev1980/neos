@@ -287,14 +287,48 @@
             // Вспомогательная функция: градусы → радианы
             function degToRad(d) { return d * Math.PI / 180; }
 
+            // Кэш предзагруженных панорам
+            const preloadedPanoramas = new Map();
+
+            // Функция предзагрузки панорамы через PhotoSphereViewer
+            function preloadPanorama(url) {
+                if (preloadedPanoramas.has(url)) {
+                    return; // Уже загружается или загружена
+                }
+
+                console.log('⏬ Предзагрузка панорамы:', url);
+
+                // Помечаем что началась загрузка
+                preloadedPanoramas.set(url, false);
+
+                // Используем встроенный метод PhotoSphereViewer для предзагрузки
+                viewer.textureLoader.preloadPanorama(url)
+                    .then(() => {
+                        preloadedPanoramas.set(url, true);
+                        console.log('✅ Панорама предзагружена:', url);
+                    })
+                    .catch((error) => {
+                        console.warn('❌ Ошибка предзагрузки панорамы:', url, error);
+                        preloadedPanoramas.delete(url); // Удаляем из кэша чтобы можно было повторить
+                    });
+            }
+
             // Получаем MarkersPlugin
             let markersPlugin = null;
             if (PhotoSphereViewer.MarkersPlugin) {
                 markersPlugin = viewer.getPlugin(PhotoSphereViewer.MarkersPlugin);
             }
 
+            // Переменная для отслеживания последней отрендеренной панорамы
+            let lastRenderedPanoramaId = null;
+
             // Функция для отображения маркеров текущей панорамы
             function renderHotspots(panorama) {
+                // Защита от повторного рендеринга той же панорамы
+                if (lastRenderedPanoramaId === panorama.id) {
+                    return;
+                }
+                lastRenderedPanoramaId = panorama.id;
                 if (!markersPlugin || !panorama.hotspots || panorama.hotspots.length === 0) {
                     return;
                 }
@@ -355,6 +389,16 @@
                 });
 
                 console.log(`Отрендерено ${panorama.hotspots.length} hotspot(ов) для панорамы ${panorama.title}`);
+
+                // Предзагружаем целевые панорамы для toggle-hotspots
+                panorama.hotspots.forEach(hotspot => {
+                    if (hotspot.type === 'toggle' && hotspot.target_panorama_id) {
+                        const targetPanorama = panoramas.find(p => p.id === hotspot.target_panorama_id);
+                        if (targetPanorama && targetPanorama.url) {
+                            preloadPanorama(targetPanorama.url);
+                        }
+                    }
+                });
 
                 // Также обновляем hotspots на плане
                 renderPlanHotspots(panorama);
@@ -481,10 +525,17 @@
                         console.log('Info hotspot clicked:', hotspot);
                     } else if (hotspot.type === 'toggle' && hotspot.target_panorama_id) {
                         // Мгновенное переключение между текущей и целевой панорамой
+                        console.time('⚡ Toggle переключение');
                         const currentUrl = viewer.config.panorama;
                         const current = panoramas.find(p => p.url === currentUrl) || firstPanorama;
                         const target = panoramas.find(p => p.id === hotspot.target_panorama_id);
                         if (!target) return;
+
+                        console.log('🔄 Toggle клик:', {
+                            from: current.title,
+                            to: target.title,
+                            preloaded: preloadedPanoramas.get(target.url)
+                        });
 
                         // Текущая камера в градусах на момент клика
                         const pos = viewer.getPosition();
@@ -506,7 +557,8 @@
                             // Подавить анимацию позиции, задать точный ракурс
                             suppressNextPanoramaAnimation = true;
                             viewer.setPanorama(origin.url, {
-                                transition: { speed: 0, effect: 'fade' },
+                                transition: false, // Полностью отключаем переход
+                                showLoader: false, // Не показываем loader
                                 position: { yaw: backYaw, pitch: backPitch },
                                 zoom: backZoom,
                                 sphereCorrection: {
@@ -515,16 +567,16 @@
                                     roll: 0
                                 },
                                 caption: '{{ $tour->name }} <b>&bull;</b> ' + origin.title
-                            }).then(() => {
-                                renderHotspots(origin);
                             });
+                            // renderHotspots вызовется в обработчике panorama-loaded
                         } else {
                             // Переход на целевую панораму: запомнить камеру исходной
                             marker.data._origin_camera = { yaw: yawDeg, pitch: pitchDeg, zoom };
 
                             suppressNextPanoramaAnimation = true;
                             viewer.setPanorama(target.url, {
-                                transition: { speed: 0, effect: 'fade' },
+                                transition: false, // Полностью отключаем переход
+                                showLoader: false, // Не показываем loader
                                 position: { yaw: yawDeg * Math.PI / 180, pitch: pitchDeg * Math.PI / 180 },
                                 zoom,
                                 sphereCorrection: {
@@ -533,9 +585,8 @@
                                     roll: 0
                                 },
                                 caption: '{{ $tour->name }} <b>&bull;</b> ' + target.title
-                            }).then(() => {
-                                renderHotspots(target);
                             });
+                            // renderHotspots вызовется в обработчике panorama-loaded
                         }
                     }
                 });
@@ -573,6 +624,7 @@
                     // Пропустить анимацию камеры, просто перерендерить хотспоты
                     suppressNextPanoramaAnimation = false;
                     renderHotspots(currentPanorama);
+                    console.timeEnd('⚡ Toggle переключение');
                     return;
                 }
 
