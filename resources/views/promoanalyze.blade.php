@@ -333,6 +333,23 @@
             }
         }
     </style>
+    @if(config('app.env') == 'production')
+        <script type="text/javascript" >
+        (function(m,e,t,r,i,k,a){m[i]=m[i]||function(){(m[i].a=m[i].a||[]).push(arguments)};
+            var z = null;m[i].l=1*new Date();
+            for (var j = 0; j < document.scripts.length; j++) {if (document.scripts[j].src === r) { return; }}
+            k=e.createElement(t),a=e.getElementsByTagName(t)[0],k.async=1,k.src=r,a.parentNode.insertBefore(k,a)})
+        (window, document, "script", "https://mc.yandex.ru/metrika/tag.js", "ym");
+
+        ym(90242859, "init", {
+            clickmap:true,
+            trackLinks:true,
+            accurateTrackBounce:true,
+            webvisor:true
+        });
+        </script>
+        <noscript><div><img src="https://mc.yandex.ru/watch/90242859" style="position:absolute; left:-9999px;" alt="" /></div></noscript>
+    @endif
 </head>
 <body>
     <!-- Страница 1: ИНТРИГА -->
@@ -343,8 +360,7 @@
             <p><strong>Появился инструмент, который позволяет за 48 часов получить полную картину рынка недвижимости:</strong></p>
             
             <!-- ИЗОБРАЖЕНИЕ 1: График анализа рынка -->
-            <!-- ПРОМПТ: Professional market analysis dashboard on computer screen, real estate market graphs and charts, data visualization, clean modern interface, blue and purple color scheme, financial analytics, property market trends, photorealistic, high quality, business photography -->
-            <img src="https://via.placeholder.com/600x400/667eea/ffffff?text=Market+Analysis+Dashboard" alt="Профессиональный анализ рынка недвижимости" class="hero-image">
+            <img src="{{ asset('images/promost1-1.png') }}" alt="Профессиональный анализ рынка недвижимости" class="hero-image">
             
             <p>Причём работает он даже для тех, кто никогда не имел дела с недвижимостью. То есть вы можете быть новичком, но получить такой же анализ, как у профессионалов с 20-летним опытом.</p>
             
@@ -390,8 +406,7 @@
             </div>
             
             <!-- ИЗОБРАЖЕНИЕ 2: Замешательство с ценами -->
-            <!-- ПРОМПТ: Confused person looking at real estate documents and papers with conflicting price estimates, frustrated facial expression, hands on head, scattered papers with numbers, stress and confusion concept, natural lighting, photorealistic, business photography, 35mm lens -->
-            <img src="https://via.placeholder.com/600x400/dc3545/ffffff?text=Price+Confusion" alt="Замешательство с ценами на недвижимость" class="page-image">
+            <img src="{{ asset('images/promost2-1.png') }}" alt="Замешательство с ценами на недвижимость" class="page-image">
             
             <p><span class="emoji">🤬</span> <strong>Для флипперов еще хуже!</strong> Вы покупаете квартиру "под ремонт" за 4 млн, вкладываете 1.5 млн в ремонт, а после продаете за 6 млн. Где обещанная прибыль в 1 млн?</p>
             
@@ -428,8 +443,7 @@
             <p><strong>История о том, как системная проблема целой индустрии стала триггером к решению</strong></p>
             
             <!-- ИЗОБРАЖЕНИЕ 3: Портрет Дмитрия Красавцева -->
-            <!-- ПРОМПТ: Professional portrait of confident 35-year-old Russian businessman Dmitry Krasavtsev, smart casual business attire, standing with crossed arms, friendly but professional expression, modern office background with soft bokeh, natural lighting, photorealistic, corporate headshot style, shot on Canon 85mm f/1.4 -->
-            <img src="https://via.placeholder.com/200x200/667eea/ffffff?text=Dmitry+Krasavtsev" alt="Дмитрий Красавцев - основатель НЕОС" class="portrait-image">
+            <img src="{{ asset('images/promost3-1.png') }}" alt="Дмитрий Красавцев - основатель НЕОС" class="portrait-image">
             
             <p>Меня зовут Дмитрий Красавцев. Я в недвижимости с 2011 года:</p>
             <ul>
@@ -566,8 +580,7 @@
             <p><strong>Включите осознанность и посмотрите, что происходит прямо сейчас!</strong></p>
             
             <!-- ИЗОБРАЖЕНИЕ 4: Момент осознания -->
-            <!-- ПРОМПТ: Conceptual image of person having "aha moment", light bulb illuminating above head, realization and awareness concept, dramatic lighting, thinking pose, metaphorical photography, cinematic style, high contrast -->
-            <img src="https://via.placeholder.com/600x400/ffc107/333333?text=Aha+Moment" alt="Момент осознания" class="page-image">
+            <img src="{{ asset('images/promost4-1.png') }}" alt="Момент осознания" class="page-image">
             
             <p>Остановитесь на секунду. Откиньтесь на спинку стула. Сделайте глубокий вдох.</p>
             
@@ -618,8 +631,7 @@
             <p>Это комплексный отчет объемом <strong>5 страниц</strong>, который содержит:</p>
             
             <!-- ИЗОБРАЖЕНИЕ 5: Скриншот отчета -->
-            <!-- ПРОМПТ: Professional real estate market analysis report mockup, 5 pages with graphs and charts, property price trends, market liquidity charts, comparison tables, clean modern design, data visualization, business document photography, high quality, realistic -->
-            <img src="https://via.placeholder.com/600x450/667eea/ffffff?text=Market+Analysis+Report" alt="Пример отчета анализа рынка" class="hero-image">
+            <img src="{{ asset('images/promost5-1.png') }}" alt="Пример отчета анализа рынка" class="hero-image">
             
             <div class="steps">
                 <div class="step"><strong>Карта сегмента с выделенными домами</strong> - визуальное отображение текущего сегмента для максимально точного сравнительного анализа среди объектов</div>
@@ -669,8 +681,7 @@
             <p><strong>Объективные данные вместо субъективных мнений - ваше конкурентное преимущество!</strong></p>
             
             <!-- ИЗОБРАЖЕНИЕ 6: Успешная сделка -->
-            <!-- ПРОМПТ: Happy satisfied clients shaking hands after successful real estate deal, professional business meeting, modern office, smiling faces, success and trust concept, natural lighting, photorealistic, business photography, shot on 35mm -->
-            <img src="https://via.placeholder.com/600x400/28a745/ffffff?text=Successful+Deal" alt="Успешная сделка с недвижимостью" class="page-image">
+            <img src="{{ asset('images/promost6-2.png') }}" alt="Успешная сделка с недвижимостью" class="page-image">
             
             <h2>Что вы получаете:</h2>
             <ul>
@@ -695,35 +706,35 @@
                 <p><strong>Калькулятор доходности флип-проекта</strong> - просчитайте рентабельность инвестиции ДО покупки объекта. Введите стоимость покупки и ремонта, получите прогноз прибыли</p>
             </div>
             
-            <h2>Реальные кейсы клиентов:</h2>
-            
+            <!-- <h2>Реальные кейсы клиентов:</h2>
+
             <div class="case">
                 <h4>📈 Продавец 3-комнатной квартиры</h4>
                 <p><strong>Анна, 42 года, г. Новосибирск</strong></p>
                 <p>Риелтор оценил квартиру в 6.2 млн. После анализа рынка выяснилось, что аналогичные квартиры в доме продаются за 6.5-6.8 млн.</p>
                 <p><strong>Результат:</strong> Продала за 6.65 млн. Дополнительная выгода: <span style="color: #28a745; font-weight: bold;">+450 000 руб</span></p>
             </div>
-            
+
             <div class="case">
                 <h4>🏗️ Инвестор-флиппер</h4>
                 <p><strong>Михаил, 35 лет, г. Екатеринбург</strong></p>
                 <p>Хотел купить квартиру за 3.8 млн "под ремонт". Анализ показал, что после ремонта аналоги продаются за 5.2-5.4 млн, а не за 6 млн как обещал агент.</p>
                 <p><strong>Результат:</strong> Отказался от невыгодной сделки. Сэкономил на убытках: <span style="color: #28a745; font-weight: bold;">~600 000 руб</span></p>
             </div>
-            
+
             <div class="case">
                 <h4>📊 Продавец 2-комнатной квартиры</h4>
                 <p><strong>Сергей, 38 лет, г. Москва</strong></p>
                 <p>Продавал самостоятельно, выставил за 7.8 млн. Анализ показал, что рыночная цена 8.2-8.5 млн для его дома и этажа.</p>
                 <p><strong>Результат:</strong> Скорректировал цену до 8.3 млн, продал за 3 недели. Дополнительная выгода: <span style="color: #28a745; font-weight: bold;">+500 000 руб</span></p>
             </div>
-            
+
             <div class="case">
                 <h4>🏗️ Флиппер-новичок</h4>
                 <p><strong>Дмитрий, 48 лет, предприниматель</strong></p>
                 <p>Первый флип-проект. Заказал анализ перед покупкой. Купил недооцененную квартиру с учётом всех данных.</p>
                 <p><strong>Результат:</strong> Через 8 месяцев продал на 18% дороже рынка. Прибыль: <span style="color: #28a745; font-weight: bold;">+1 120 000 руб</span></p>
-            </div>
+            </div> -->
             
             <h2>Стоимость анализа:</h2>
             

@@ -1,6 +1,5 @@
 User-agent: *
 Disallow: /admin/
-Disallow: /BlagoTour2017Oct/
-Disallow: /BlagoTour2023Sept/
-Host: https://blagoveshenka.ru/
-Sitemap: https://blagoveshenka.ru/sitemap.xml
+
+Host: https://neos-nsk.ru/
+Sitemap: https://neos-nsk.ru/sitemap.xml
