@@ -16,6 +16,14 @@ use Illuminate\Support\Facades\Route;
 | contains the "web" middleware group. Now create something great!
 |
 */
+
+// Subdomain routes
+Route::domain('promoanalyze.neos-nsk.test')->group(function () {
+    Route::get('/', function () {
+        return view('promoanalyze');
+    })->name('promoanalyze.landing');
+});
+
 Route::get('/', [FilamentPageController::class, 'show'])->name('HomePage');
 Route::get('/sitemap.xml', [SitemapXmlController::class, 'index'])->name('sitemap');
 Route::get('/tour/{uuid}', [App\Http\Controllers\TourViewController::class, 'show'])->name('tour.view')->middleware('allow.iframe');
