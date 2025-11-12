@@ -18,7 +18,7 @@ use Illuminate\Support\Facades\Route;
 */
 
 // Subdomain routes
-Route::domain('promoanalyze.neos-nsk.test')->group(function () {
+Route::domain('promoanalyze.' . env('APP_DOMAIN'))->group(function () {
     Route::get('/', function () {
         return view('promoanalyze');
     })->name('promoanalyze.landing');
