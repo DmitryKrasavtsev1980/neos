@@ -895,7 +895,7 @@
             
             // Отслеживание для Яндекс.Метрики
             if (typeof ym !== 'undefined') {
-                ym(XXXXXX, 'reachGoal', 'page_' + pageNum);
+                ym(90242859, 'reachGoal', 'page_' + pageNum);
             }
         }
         
