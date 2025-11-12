@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{{ $personalPageData['page_title'] ?? $tour->name }}</title>
-
+    <link rel="icon" type="image/svg+xml" href="{{ asset('favicon.svg') }}">
     <!-- Vite scripts -->
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 
