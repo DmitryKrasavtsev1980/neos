@@ -362,7 +362,7 @@
 
             <!-- ИЗОБРАЖЕНИЕ 1: Семья изучает анализ рынка -->
             <!-- ПРОМПТ: Russian family (parents 40-45 years old) sitting together at home looking at laptop screen showing real estate market analysis with property prices and charts, warm home interior, natural window lighting, relieved and confident expressions, studying data together, modern apartment setting, lifestyle photography, photorealistic, shot on 35mm lens, 4K quality -->
-            <img src="{{ asset('images/promost1-1.png') }}" alt="Семья изучает анализ рынка недвижимости" class="hero-image">
+            <img src="{{ asset('images/promoownerst1.png') }}" alt="Семья изучает анализ рынка недвижимости" class="hero-image">
 
             <p>Причём работает он даже если вы продаёте квартиру впервые в жизни. Вы получаете такую же объективную оценку, как если бы наняли аналитика с 20-летним опытом.</p>
 
@@ -410,7 +410,7 @@
 
             <!-- ИЗОБРАЖЕНИЕ 2: Собственник в замешательстве -->
             <!-- ПРОМПТ: Russian homeowner man 45-50 years old sitting at kitchen table looking confused and stressed, three different papers with property valuations showing different prices in front of him, hands on head in frustration, calculator and real estate advertisements scattered on table, natural home lighting, worried expression, documentary photography style, photorealistic, shot on 35mm lens, 4K quality -->
-            <img src="{{ asset('images/promost2-1.png') }}" alt="Собственник в замешательстве из-за разных оценок" class="page-image">
+            <img src="{{ asset('images/promoownerst2.png') }}" alt="Собственник в замешательстве из-за разных оценок" class="page-image">
 
             <p><span class="emoji">🤬</span> <strong>А ещё хуже, когда вам нужно продать быстро!</strong> Переезд, развод, ипотека на шее... Риелтор говорит "снижайте цену для быстрой продажи", вы в панике снижаете на 500 тысяч... А потом узнаёте, что соседи продали за бОльшую цену!</p>
 
@@ -530,7 +530,7 @@
 
             <!-- ИЗОБРАЖЕНИЕ 4: Собственник обдумывает стратегию продажи -->
             <!-- ПРОМПТ: Russian homeowner 45-50 years old sitting thoughtfully at home desk, looking at laptop screen showing property listings and price data, hand on chin in contemplative pose, moment of clarity and decision-making, natural home office lighting, modern apartment interior with window in background, calm and confident expression, lifestyle photography, photorealistic, shot on 50mm f/1.8, 4K quality, shallow depth of field -->
-            <img src="{{ asset('images/promost4-1.png') }}" alt="Собственник обдумывает стратегию продажи" class="page-image">
+            <img src="{{ asset('images/promoownerst4.png') }}" alt="Собственник обдумывает стратегию продажи" class="page-image">
 
             <p>Остановитесь на секунду. Откиньтесь на спинку стула. Сделайте глубокий вдох.</p>
 
@@ -582,7 +582,7 @@
 
             <!-- ИЗОБРАЖЕНИЕ 5: Отчёт анализа рынка на экране -->
             <!-- ПРОМПТ: Professional real estate market analysis report displayed on modern laptop screen and tablet, showing interactive property price charts with clear price ranges, data tables of sold apartments with photos, market trends graphs, property comparison module with similar listings, clean modern dashboard interface, residential apartment analysis data, blue and purple color scheme, high-tech business photography, sharp focus on screen details, 4K quality, professional lighting -->
-            <img src="{{ asset('images/promost5-1.png') }}" alt="Пример отчёта анализа рынка для собственников" class="hero-image">
+            <img src="{{ asset('images/promoownerst5.png') }}" alt="Пример отчёта анализа рынка для собственников" class="hero-image">
 
             <div class="steps">
                 <div class="step"><strong>Карта сегмента с выделенными домами</strong> - визуальное отображение текущего сегмента для максимально точного сравнительного анализа среди объектов</div>
@@ -633,7 +633,7 @@
 
             <!-- ИЗОБРАЖЕНИЕ 6: Счастливая семья после успешной продажи -->
             <!-- ПРОМПТ: Happy Russian family (couple 40-45 years old with teenage son) celebrating successful home sale, handshake with buyer in background, modern apartment interior with panoramic windows, keys and signed documents on table, relieved and joyful expressions, successful real estate transaction moment, natural warm lighting, lifestyle photography, photorealistic, shot on 35mm lens, 4K quality, shallow depth of field -->
-            <img src="{{ asset('images/promost6-2.png') }}" alt="Успешная продажа квартиры" class="page-image">
+            <img src="{{ asset('images/promoownerst6-1.png') }}" alt="Успешная продажа квартиры" class="page-image">
 
             <h2>Что вы получаете:</h2>
             <ul>
