@@ -24,6 +24,18 @@ Route::domain('promoanalyze.' . env('APP_DOMAIN'))->group(function () {
     })->name('promoanalyze.landing');
 });
 
+Route::domain('promoflip.' . env('APP_DOMAIN'))->group(function () {
+    Route::get('/', function () {
+        return view('promoflip');
+    })->name('promoflip.landing');
+});
+
+Route::domain('promoowner.' . env('APP_DOMAIN'))->group(function () {
+    Route::get('/', function () {
+        return view('promoowner');
+    })->name('promoowner.landing');
+});
+
 Route::get('/', [FilamentPageController::class, 'show'])->name('HomePage');
 Route::get('/sitemap.xml', [SitemapXmlController::class, 'index'])->name('sitemap');
 Route::get('/tour/{uuid}', [App\Http\Controllers\TourViewController::class, 'show'])->name('tour.view')->middleware('allow.iframe');
