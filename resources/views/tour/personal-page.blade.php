@@ -11,11 +11,11 @@
     <!-- Leaflet CSS -->
     <link rel="stylesheet" href="/css/leaflet.css">
 
-    <!-- jQuery (требуется для Fotorama) -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <!-- jQuery 3.7.1 -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
 
-    <!-- Fotorama CSS -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fotorama/4.6.4/fotorama.css">
+    <!-- Swiper CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css">
 
     <style>
         .tour-viewer {
@@ -67,11 +67,29 @@
                     <div class="space-y-6">
                         <h3 class="text-lg font-medium text-gray-800 border-b border-gray-200 pb-3">Галерея фотографий</h3>
                         <div class="rounded-lg overflow-hidden">
-                            <div class="fotorama" data-nav="thumbs" data-width="100%" data-height="400" data-thumbwidth="80" data-thumbheight="60">
-                                @foreach($personalPageData['gallery'] as $photo)
-                                    <img src="{{ $photo['image'] }}" data-caption="{{ $photo['title'] ?? '' }}" alt="{{ $photo['title'] ?? 'Фото' }}">
-                                @endforeach
+                            <div class="swiper tour-gallery-swiper">
+                                <div class="swiper-wrapper">
+                                    @foreach($personalPageData['gallery'] as $photo)
+                                        <div class="swiper-slide">
+                                            <img src="{{ $photo['image'] }}" alt="{{ $photo['title'] ?? 'Фото' }}" class="w-full h-[400px] object-cover">
+                                        </div>
+                                    @endforeach
+                                </div>
+                                <div class="swiper-pagination"></div>
+                                <div class="swiper-button-prev"></div>
+                                <div class="swiper-button-next"></div>
                             </div>
+                            @if(count($personalPageData['gallery']) > 1)
+                            <div class="swiper tour-gallery-thumbs mt-2">
+                                <div class="swiper-wrapper">
+                                    @foreach($personalPageData['gallery'] as $photo)
+                                        <div class="swiper-slide" style="width:80px;height:60px;">
+                                            <img src="{{ $photo['image'] }}" alt="{{ $photo['title'] ?? 'Фото' }}" class="w-full h-full object-cover rounded cursor-pointer">
+                                        </div>
+                                    @endforeach
+                                </div>
+                            </div>
+                            @endif
                         </div>
                     </div>
                     @endif
@@ -111,11 +129,20 @@
     <!-- Leaflet JS -->
     <script src="/js/leaflet.js"></script>
 
-    <!-- Fotorama JS -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/fotorama/4.6.4/fotorama.js"></script>
+    <!-- Swiper JS -->
+    <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
 
     <script>
         document.addEventListener('DOMContentLoaded', function() {
+            // Инициализация Swiper галереи
+            var thumbsEl = document.querySelector('.tour-gallery-thumbs');
+            var thumbsConfig = thumbsEl ? { thumbs: { swiper: new Swiper(thumbsEl, { spaceBetween: 4, slidesPerView: 'auto', freeMode: true, watchSlidesProgress: true }) } } : {};
+            new Swiper('.tour-gallery-swiper', Object.assign({
+                spaceBetween: 8,
+                navigation: { nextEl: '.swiper-button-next', prevEl: '.swiper-button-prev' },
+                pagination: { el: '.swiper-pagination', clickable: true }
+            }, thumbsConfig));
+
             // Ждем полной загрузки Vite
             if (typeof PhotoSphereViewer === 'undefined') {
                 console.log('Ожидание загрузки PhotoSphereViewer...');

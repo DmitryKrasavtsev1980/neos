@@ -9,16 +9,29 @@
                     <!-- Tab panel, show/hide based on tab state. -->
                     <div id="tabs-1-panel-1" aria-labelledby="tabs-1-tab-1" role="tabpanel" tabindex="0">
                         @if($product->images)
-                            <div class="fotorama"
-                                 data-ratio="800/600"
-                                 data-width="100%"
-                                 data-height="450"
-                                 data-allowfullscreen="true"
-                                 data-nav="thumbs">
-                                @foreach($product->images as $image)
-                                    <a href="{{ $image }}"><img src="{{ $image }}"/></a>
-                                @endforeach
+                            <div class="swiper product-gallery-swiper">
+                                <div class="swiper-wrapper">
+                                    @foreach($product->images as $image)
+                                        <div class="swiper-slide">
+                                            <img src="{{ $image }}" class="w-full h-[450px] object-cover rounded" alt=""/>
+                                        </div>
+                                    @endforeach
+                                </div>
+                                <div class="swiper-pagination"></div>
+                                <div class="swiper-button-prev"></div>
+                                <div class="swiper-button-next"></div>
                             </div>
+                            @if(count($product->images) > 1)
+                            <div class="swiper product-gallery-thumbs mt-2">
+                                <div class="swiper-wrapper">
+                                    @foreach($product->images as $image)
+                                        <div class="swiper-slide" style="width:80px;height:60px;">
+                                            <img src="{{ $image }}" class="w-full h-full object-cover rounded cursor-pointer" alt=""/>
+                                        </div>
+                                    @endforeach
+                                </div>
+                            </div>
+                            @endif
                         @else
                             <svg xmlns="http://www.w3.org/2000/svg"
                                  class="stroke-1 h-full w-full object-cover object-center sm:h-full sm:w-full"
@@ -90,6 +103,16 @@
     </div>
 </div>
 <script>
+    document.addEventListener('DOMContentLoaded', function() {
+        var thumbsEl = document.querySelector('.product-gallery-thumbs');
+        var thumbsConfig = thumbsEl ? { thumbs: { swiper: new Swiper(thumbsEl, { spaceBetween: 4, slidesPerView: 'auto', freeMode: true, watchSlidesProgress: true }) } } : {};
+        new Swiper('.product-gallery-swiper', Object.assign({
+            spaceBetween: 8,
+            navigation: { nextEl: '.swiper-button-next', prevEl: '.swiper-button-prev' },
+            pagination: { el: '.swiper-pagination', clickable: true }
+        }, thumbsConfig));
+    });
+
     @if($product->lat && $product->lng)
     var map = L.map('map').setView([{{ $product->lat }}, {{ $product->lng }}], 16);
 
