@@ -60,6 +60,10 @@
                     </div>
                     <h2 class="text-2xl sm:text-3xl font-bold tracking-tight text-gray-900 mb-3">Персональный подход<br>к каждой сделке</h2>
                     <p class="text-gray-600 leading-relaxed mb-5">Я работаю без агентства — это значит, что вы общаетесь напрямую со специалистом, который лично ведёт вашу сделку от первого звонка до передачи ключей.</p>
+                    <div class="mb-5">
+                        <div class="font-semibold text-gray-900">Дмитрий Красавцев</div>
+                        <div class="text-sm text-gray-500">риелтор</div>
+                    </div>
                     <div class="flex flex-wrap justify-center md:justify-start gap-3">
                         <div class="flex items-center gap-2 bg-green-50 border border-green-200 rounded-full px-3 py-1.5">
                             <svg class="w-4 h-4 text-green-600" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75m-3-7.036A11.959 11.959 0 013.598 6 11.99 11.99 0 003 9.749c0 5.592 3.824 10.29 9 11.623 5.176-1.332 9-6.03 9-11.622 0-1.31-.21-2.571-.598-3.751h-.152c-3.196 0-6.1-1.248-8.25-3.285z"/></svg>
@@ -77,6 +81,82 @@
                 </div>
             </div>
         </div>
+    </div>
+</div>
+
+{{-- Портфолио — пример рекламных материалов --}}
+<div class="bg-white">
+    <div class="mx-auto max-w-7xl px-6 py-16 sm:py-24 lg:px-8">
+        <div class="mx-auto max-w-2xl text-center mb-12">
+            <p class="text-base font-semibold text-purple-600">Портфолио</p>
+            <h2 class="mt-2 text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl">Пример рекламных материалов</h2>
+            <p class="mt-4 text-gray-600">Такие фото и виртуальный тур я создаю для каждой квартиры</p>
+        </div>
+
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-3 mb-4">
+            <div class="col-span-2 row-span-2 relative rounded-xl overflow-hidden group">
+                <img src="https://z-cdn-media.chatglm.cn/files/21e7488e-1154-4000-a093-432d4dce7ebb.jpg?auth_key=1879537526-698815fbb1de46fe849deb433c36e93b-0-510719dbe9ee54a170d225e6f5998aa0" alt="Гостиная" class="w-full h-64 sm:h-80 object-cover group-hover:scale-105 transition-transform duration-300">
+                <div class="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity flex items-end p-4">
+                    <span class="text-sm font-medium text-white">Гостиная</span>
+                </div>
+            </div>
+            <div class="relative rounded-xl overflow-hidden group">
+                <img src="https://z-cdn-media.chatglm.cn/files/433f9257-cb25-41d5-b41f-da451b59f424.jpg?auth_key=1879537526-2e5a04c62d794aeb80eb47a464933e68-0-5fc075d4eccd4af06e4b7339d1a2b3b2" alt="Вид из комнаты" class="w-full h-36 sm:h-[156px] object-cover group-hover:scale-105 transition-transform duration-300">
+                <div class="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity flex items-end p-3">
+                    <span class="text-xs font-medium text-white">Вид из комнаты</span>
+                </div>
+            </div>
+            <div class="relative rounded-xl overflow-hidden group">
+                <img src="https://z-cdn-media.chatglm.cn/files/eef785ac-8638-4a11-9653-4dc01899ab0a.jpg?auth_key=1879537526-0dbaa3312f6f4fe1bba61efee25f9862-0-c12a36c00175849ab6adcd574159548a" alt="Спальня" class="w-full h-36 sm:h-[156px] object-cover group-hover:scale-105 transition-transform duration-300">
+                <div class="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity flex items-end p-3">
+                    <span class="text-xs font-medium text-white">Спальня</span>
+                </div>
+            </div>
+            <div class="relative rounded-xl overflow-hidden group">
+                <img src="https://z-cdn-media.chatglm.cn/files/ae595f5d-263b-4173-b1ba-5d17173f3a90.jpg?auth_key=1879537526-2182deb610474a8b8ad3019d1178551f-0-5f2ad57b0ef14d09d768d618b2d324b7" alt="Прихожая" class="w-full h-36 sm:h-[156px] object-cover group-hover:scale-105 transition-transform duration-300">
+                <div class="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity flex items-end p-3">
+                    <span class="text-xs font-medium text-white">Прихожая</span>
+                </div>
+            </div>
+            <div class="relative rounded-xl overflow-hidden group">
+                <img src="https://z-cdn-media.chatglm.cn/files/5433fca6-46ab-4b88-86b1-f8a1fa7d731b.jpg?auth_key=1879537526-25a8a89ef82d45d89d1595992fde8cdd-0-58e9b53ade6a77e2fa91a05bc65beb6d" alt="Санузел" class="w-full h-36 sm:h-[156px] object-cover group-hover:scale-105 transition-transform duration-300">
+                <div class="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity flex items-end p-3">
+                    <span class="text-xs font-medium text-white">Санузел</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-3 mb-8">
+            <div class="relative rounded-xl overflow-hidden group">
+                <img src="https://z-cdn-media.chatglm.cn/files/4c564ffd-999b-4b04-97a5-ff747e97b847.jpg?auth_key=1879537526-756ece2b7c8f42e7834933935544c9d2-0-c5a39b4240384c930066a1f1fc4b8fe9" alt="Вид из окна" class="w-full h-48 sm:h-56 object-cover group-hover:scale-105 transition-transform duration-300">
+                <div class="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity flex items-end p-4">
+                    <span class="text-sm font-medium text-white">Вид из окна — берёзовая роща</span>
+                </div>
+            </div>
+            <div class="relative rounded-xl overflow-hidden group">
+                <img src="https://z-cdn-media.chatglm.cn/files/571fb7e2-987f-4f36-9be0-09271f8a55d9.jpg?auth_key=1879537526-c5b57e6d9abd438097c1542c40f4df41-0-cbc2d80b0c5067a9aa202b4bb55a1f1c" alt="Планировка" class="w-full h-48 sm:h-56 object-cover group-hover:scale-105 transition-transform duration-300">
+                <div class="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity flex items-end p-4">
+                    <span class="text-sm font-medium text-white">Планировка — 37,80 м&sup2;</span>
+                </div>
+            </div>
+        </div>
+
+        {{-- Ссылка на виртуальный тур --}}
+        <a href="https://neos-nsk.ru/tour/5e6e008c-8f48-40f6-8726-351664a79ece" target="_blank" rel="noopener" class="block bg-gray-50 rounded-2xl p-6 sm:p-8 border border-gray-200 hover:border-blue-300 hover:shadow-lg transition-all group">
+            <div class="flex flex-col sm:flex-row items-center gap-6">
+                <div class="w-16 h-16 rounded-2xl bg-blue-100 flex items-center justify-center flex-shrink-0 group-hover:scale-110 transition-transform">
+                    <svg class="w-8 h-8 text-blue-600" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0l3.181 3.183a8.25 8.25 0 0013.803-3.7M4.031 9.865a8.25 8.25 0 0113.803-3.7l3.181 3.182M15 12a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+                </div>
+                <div class="text-center sm:text-left flex-1">
+                    <h3 class="text-lg font-semibold text-gray-900 mb-1 group-hover:text-blue-600 transition-colors">Виртуальный 3D-тур по квартире</h3>
+                    <p class="text-sm text-gray-500">Нажмите, чтобы посмотреть пример интерактивного тура — как это видят ваши покупатели</p>
+                </div>
+                <div class="flex items-center gap-2 text-sm font-medium text-blue-600 flex-shrink-0">
+                    Открыть тур
+                    <svg class="w-4 h-4 group-hover:translate-x-1 group-hover:-translate-y-0.5 transition-transform" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M13.5 6H5.25A2.25 2.25 0 003 8.25v10.5A2.25 2.25 0 005.25 21h10.5A2.25 2.25 0 0018 18.75V10.5m-10.5 6L21 3m0 0h-5.25M21 3v5.25"/></svg>
+                </div>
+            </div>
+        </a>
     </div>
 </div>
 
